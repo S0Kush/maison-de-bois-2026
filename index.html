@@ -105,26 +105,15 @@
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
 
         #player {
-    position: absolute; 
-    bottom: 0; 
-    left: 30px; 
-    width: 65px; 
-    height: 85px;
-    z-index: 20; 
-    /* Force l'image à s'étirer pour remplir tout le cadre, 
-       ce qui compense les différences de découpe des PNG */
-    background-size: 100% 100%; 
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    /* Optionnel : ajoute ceci pour éviter le flou si tes sprites sont petits */
-    image-rendering: pixelated; 
-}
+            position: absolute; bottom: 0; left: 30px; width: 65px; height: 85px;
+            z-index: 20; background-size: 100% 100%; background-repeat: no-repeat;
+            background-position: center bottom; image-rendering: pixelated; 
+        }
         
-        .platform { 
-            position: absolute; bottom: 0; 
-            background: rgba(0, 255, 255, 0.2); 
-            border-top: 3px solid var(--cyan); border-left: 1px solid rgba(0,255,255,0.5);
-            box-shadow: 0 0 15px rgba(0,255,255,0.3); z-index: 15;
+        .swag-item {
+            position: absolute; width: 40px; height: 40px;
+            background-size: contain; background-repeat: no-repeat;
+            z-index: 18; pointer-events: none;
         }
 
         .ground-line {
@@ -189,7 +178,7 @@
         <img id="meme" class="meme-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif">
     </div>
 
-    <div id="hint" class="hint-text">TAP TO CLIMB THE VIBE!</div>
+    <div id="hint" class="hint-text">TAP TO COLLECT SWAG!</div>
     <button id="main-btn" class="action-btn" onclick="startSequence()">BOOT SYSTEM</button>
 
     <div id="links-container">
@@ -213,29 +202,24 @@
     const links = document.getElementById('links-container');
     const meme = document.getElementById('meme');
 
-    // Chemins vers tes nouveaux Sprites
-    // Chemins corrigés avec url('') pour l'affichage CSS
     const spriteWalk = "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%201(4).png?raw=true')";
-    
-    const spriteJump = [
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true')", 
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%202%20(2).png?raw=true')"
+    const spriteJump = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true')"];
+    const spriteDance = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true')"];
+    const spriteAction = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%201%20(4).png?raw=true')"];
+
+    // CONFIGURATION DES OBJETS (Assignation spécifique)
+    // x: Position sur le fond (0 à 6000 env), y: hauteur depuis le sol
+    const swagObjectsConfig = [
+        { id: 'obj1', x: 800, y: 40, img: "url('OBJET1_URL')" },
+        { id: 'obj2', x: 1500, y: 120, img: "url('OBJET2_URL')" },
+        { id: 'obj3', x: 2200, y: 60, img: "url('OBJET3_URL')" },
+        { id: 'obj4', x: 3500, y: 100, img: "url('OBJET4_URL')" },
+        { id: 'obj5', x: 4800, y: 40, img: "url('OBJET5_URL')" }
     ];
-    
-    const spriteDance = [
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true')", 
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true')", 
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true')"
-    ];
-    
-    const spriteAction = [
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%201%20(4).png?raw=true')",
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%202%20(4).png?raw=true')",
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%203%20(4).png?raw=true')",
-        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%204(4).png?raw=true')"
-    ];
-    let gameActive = false, swagScore = 0, gameInterval, platformSpawner, animFrame = 0, isDancing = false;
-    let playerY = 0, vy = 0, gravity = 0.5, isJumping = false, platforms = [], stairLevel = 0;
+
+    let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
+    let playerY = 0, vy = 0, gravity = 0.5, isJumping = false;
+    let activeItems = [], collectedIds = new Set();
 
     function startSequence() {
         btn.style.display = 'none';
@@ -256,41 +240,69 @@
 
     function startGame() {
         gameArea.style.display = 'block'; gameUI.style.display = 'block'; hint.style.display = 'block';
-        gameActive = true; gameInterval = setInterval(gameLoop, 16); spawnPlatform();
+        gameActive = true; 
+        gameInterval = setInterval(gameLoop, 16);
     }
 
     function jump() { 
         if (!gameActive || isJumping || isDancing) return; 
         isJumping = true; 
-        vy = 9; // Saut un peu moins haut pour être plus long
+        vy = 9; 
     }
 
-    function spawnPlatform() {
-        if (!gameActive || isDancing) return;
-        stairLevel = (stairLevel + 1) % 4;
-        let h = stairLevel * 35;
-        if (h > 0) {
-            let p = document.createElement('div');
-            p.className = 'platform'; p.style.height = h + 'px'; p.style.width = '100px'; p.style.left = '100%';
-            gameArea.appendChild(p);
-            platforms.push({el: p, x: screen.offsetWidth, w: 100, h: h});
-        }
-        platformSpawner = setTimeout(spawnPlatform, 1100);
+    function manageItems() {
+        const bgOffset = swagScore * 30; // Vitesse du fond
+
+        swagObjectsConfig.forEach(obj => {
+            const currentX = obj.x - bgOffset;
+            
+            // Si l'objet entre dans l'écran et n'a pas été ramassé
+            if (currentX < screen.offsetWidth + 50 && currentX > -50 && !collectedIds.has(obj.id)) {
+                let item = activeItems.find(i => i.id === obj.id);
+                if (!item) {
+                    const el = document.createElement('div');
+                    el.className = 'swag-item';
+                    el.style.backgroundImage = obj.img;
+                    gameArea.appendChild(el);
+                    item = { el, id: obj.id, x: obj.x, y: obj.y };
+                    activeItems.push(item);
+                }
+                
+                // Positionnement et animation sautillante
+                const bounce = Math.sin(animFrame * 0.1) * 10;
+                item.el.style.left = currentX + 'px';
+                item.el.style.bottom = (obj.y + bounce) + 'px';
+
+                // Collision avec le perso (zone de contact env 50px)
+                if (currentX < 80 && currentX > 10 && Math.abs(playerY - obj.y) < 60) {
+                    collectItem(item);
+                }
+            } else {
+                // Supprimer si hors écran
+                const index = activeItems.findIndex(i => i.id === obj.id);
+                if (index > -1) {
+                    activeItems[index].el.remove();
+                    activeItems.splice(index, 1);
+                }
+            }
+        });
+    }
+
+    function collectItem(item) {
+        collectedIds.add(item.id);
+        item.el.remove();
+        activeItems = activeItems.filter(i => i.id !== item.id);
+        // Bonus de swag visuel
+        gameFill.style.filter = "brightness(2)";
+        setTimeout(() => gameFill.style.filter = "none", 200);
     }
 
     function gameLoop() {
         if (!gameActive) return;
-        let groundH = 0;
-        for (let i = platforms.length - 1; i >= 0; i--) {
-            let p = platforms[i];
-            p.x -= 2.5;
-            p.el.style.left = p.x + 'px';
-            if (p.x < 70 && p.x + p.w > 30) groundH = Math.max(groundH, p.h);
-            if (p.x < -100) { p.el.remove(); platforms.splice(i, 1); }
-        }
         
+        // Physique
         vy -= gravity; playerY += vy;
-        if (playerY <= groundH) { playerY = groundH; vy = 0; isJumping = false; }
+        if (playerY <= 0) { playerY = 0; vy = 0; isJumping = false; }
         player.style.bottom = playerY + 'px';
         animFrame++;
 
@@ -298,32 +310,32 @@
             swagScore += 0.08;
             gameFill.style.width = swagScore + '%';
             bgLayer.style.transform = `translateX(-${swagScore * 0.833}%)`;
+            
+            manageItems(); // Gestion des objets Swag
+
             if (swagScore >= 100) startDance();
             
-            // Animation pendant le jeu
-            // Remplace la partie animation dans le gameLoop par ceci :
-if (isJumping) {
-    player.style.backgroundImage = spriteJump[0];
-} else {
-    // On alterne entre marche et action pour simuler le mouvement
-    // Si spriteAction[0] n'est pas prêt, on reste sur spriteWalk
-    let currentSprite = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : (spriteAction[0] || spriteWalk);
-    player.style.backgroundImage = currentSprite;
-}
+            // Animation perso
+            if (isJumping) {
+                player.style.backgroundImage = spriteJump[0];
+            } else {
+                let currentSprite = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : (spriteAction[0] || spriteWalk);
+                player.style.backgroundImage = currentSprite;
+            }
         } else {
-            // Animation de danse finale
             player.style.backgroundImage = spriteDance[Math.floor(animFrame/10)%3];
         }
     }
 
     function startDance() {
-        isDancing = true; platforms.forEach(p => p.el.remove()); platforms = [];
+        isDancing = true; 
+        activeItems.forEach(i => i.el.remove());
         player.style.left = "calc(50% - 32px)"; playerY = 0;
         setTimeout(endSequence, 4000);
     }
 
     function endSequence() {
-        gameActive = false; clearInterval(gameInterval); clearTimeout(platformSpawner);
+        gameActive = false; clearInterval(gameInterval);
         gameArea.style.display = 'none'; gameUI.style.display = 'none'; hint.style.display = 'none';
         screen.style.height = '160px';
         setTimeout(() => {
