@@ -265,6 +265,9 @@
     let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
     let playerY = 0, vy = 0, gravity = 0.35, isJumping = false;
     let activeItems = [], collectedIds = new Set();
+    let lastTime = 0;
+const fpsTarget = 60; // On cible la vitesse normale
+const frameMs = 1000 / fpsTarget;
 
     function startSequence() {
         btn.style.display = 'none';
@@ -283,12 +286,14 @@
         }, 100);
     }
 
-    function startGame() {
-        gameArea.style.display = 'block'; gameUI.style.display = 'block'; hint.style.display = 'block';
-        gameActive = true; 
-        gameInterval = setInterval(gameLoop, 16);
-    }
-
+   function startGame() {
+    gameArea.style.display = 'block'; 
+    gameUI.style.display = 'block'; 
+    hint.style.display = 'block';
+    gameActive = true; 
+    lastTime = performance.now(); // Initialise le chrono
+    requestAnimationFrame(smoothLoop);
+}
     function jump() { 
         if (!gameActive || isJumping || isDancing) return; 
         isJumping = true; 
@@ -336,31 +341,21 @@
     function collectItem(item) {
     collectedIds.add(item.id);
     
-    // On génère un nouvel index aléatoire à CHAQUE ramassage
-    const randomIndex = Math.floor(Math.random() * swagPhrases.length);
-    const chosenPhrase = swagPhrases[randomIndex];
-    
     // Création du message flottant
     const popup = document.createElement('div');
     popup.className = 'swag-popup';
-    
-    // On positionne le texte par rapport à l'objet
     popup.style.left = item.el.style.left;
-    popup.style.bottom = (parseInt(item.el.style.bottom) + 50) + 'px';
-    
-    // On injecte la phrase aléatoire
-    popup.innerText = chosenPhrase;
+    popup.style.bottom = (parseInt(item.el.style.bottom) + 40) + 'px';
+    popup.innerHTML = swagPhrases[Math.floor(Math.random() * swagPhrases.length)];
     gameArea.appendChild(popup);
     
-    // On retire le message après l'animation
-    setTimeout(() => {
-        if (popup.parentNode) popup.remove();
-    }, 800);
+    // Nettoyage automatique du message
+    setTimeout(() => popup.remove(), 800);
 
     item.el.remove();
     activeItems = activeItems.filter(i => i.id !== item.id);
     
-    // Effet visuel
+    // Ton effet visuel sur la barre
     gameFill.style.filter = "brightness(2)";
     setTimeout(() => gameFill.style.filter = "none", 200);
 }
@@ -412,6 +407,20 @@
             meme.style.display = 'block'; links.style.display = 'flex';
         }, 600);
     }
+   function smoothLoop(currentTime) {
+    if (!gameActive) return;
+
+    // Calcul du temps écoulé depuis la dernière image
+    const deltaTime = currentTime - lastTime;
+
+    // On ne lance gameLoop que si assez de temps est passé (env 16ms)
+    if (deltaTime >= frameMs) {
+        gameLoop();
+        lastTime = currentTime;
+    }
+
+    requestAnimationFrame(smoothLoop);
+}
 </script>
 </body>
 </html>
