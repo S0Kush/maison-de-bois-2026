@@ -16,6 +16,25 @@
     /* ... tes propriétés actuelles ... */
     animation: itemGlow 1.5s infinite ease-in-out;
 }
+.trash-item {
+    position: absolute;
+    width: 60px; height: 80px; /* Taille adaptée aux sprites */
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 18;
+}
+
+.trash-popup {
+    position: absolute;
+    color: #ff0000; /* Rouge pour le côté "pas bien" */
+    font-family: 'Retro', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 0px #fff;
+    pointer-events: none;
+    z-index: 100;
+    animation: floatUp 0.8s ease-out forwards;
+}
 
 /* Style pour les messages flottants */
 .swag-popup {
@@ -244,7 +263,15 @@
 </div>
 
 <script>
-    const swagPhrases = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
+
+const swagPhrases = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
+    const trashObjectsConfig = [
+    { id: 'police1', x: 1200, y: 0, type: 'police', imgs: ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%201%20(2).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%202%20(2).png?raw=true')"] },
+    { id: 'poubelle', x: 2800, y: 0, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Poubelle.png?raw=true')" },
+    { id: 'puff', x: 4000, y: 80, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Puff%20JNR.png?raw=true')" }
+];
+
+const trashPhrases = ["C'EST NUL !", "PAS SWAG...", "LA HONTE !", "ZÉRO STYLE", "CHEUM", "AÏE AÏE AÏE"];
     const screen = document.getElementById('screen');
     const btn = document.getElementById('main-btn');
     const lcdText = document.getElementById('lcd-text');
@@ -334,6 +361,12 @@ const frameMs = 1000 / fpsTarget;
                     item = { el, id: obj.id, x: obj.x, y: obj.y };
                     activeItems.push(item);
                 }
+                // Dans ta boucle de gestion d'objets, pour le policier :
+if (obj.type === 'police') {
+    // Alterne entre l'image 1 et 2 toutes les 15 frames
+    let policeFrame = Math.floor(animFrame / 15) % 2;
+    item.el.style.backgroundImage = obj.imgs[policeFrame];
+}
                 
                 // Positionnement et animation sautillante
                 const bounce = Math.sin(animFrame * 0.1) * 10;
@@ -377,6 +410,28 @@ const frameMs = 1000 / fpsTarget;
     setTimeout(() => gameFill.style.filter = "none", 200);
 }
 
+function collectTrash(item) {
+    collectedIds.add(item.id);
+    
+    // Message de honte
+    const popup = document.createElement('div');
+    popup.className = 'trash-popup';
+    popup.style.left = item.el.style.left;
+    popup.style.bottom = (parseInt(item.el.style.bottom) + 60) + 'px';
+    popup.innerText = trashPhrases[Math.floor(Math.random() * trashPhrases.length)];
+    gameArea.appendChild(popup);
+    
+    setTimeout(() => popup.remove(), 800);
+    item.el.remove();
+    
+    // Optionnel : Baisser un peu la barre de swag
+    swagScore = Math.max(0, swagScore - 5); 
+    gameFill.style.width = swagScore + '%';
+    
+    // Effet visuel de flash rouge sur l'écran
+    screen.style.borderColor = "red";
+    setTimeout(() => screen.style.borderColor = "var(--pink)", 200);
+}
     function gameLoop() {
         if (!gameActive) return;
         
