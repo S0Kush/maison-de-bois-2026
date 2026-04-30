@@ -105,11 +105,17 @@
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
 
         #player {
-            position: absolute; bottom: 0; left: 30px; width: 65px; height: 85px;
-            z-index: 20; transition: left 1s ease-in-out;
-            background: transparent; border: none;
-            background-size: contain; background-repeat: no-repeat; background-position: center bottom;
-        }
+    position: absolute; 
+    bottom: 0; 
+    left: 30px; 
+    width: 65px;  /* Garde une largeur fixe */
+    height: 85px; /* Garde une hauteur fixe */
+    z-index: 20; 
+    transition: left 1s ease-in-out;
+    background-size: contain;      /* L'image s'adapte sans déborder */
+    background-repeat: no-repeat;
+    background-position: bottom center; /* Très important pour que les pieds ne bougent pas */
+}
         
         .platform { 
             position: absolute; bottom: 0; 
