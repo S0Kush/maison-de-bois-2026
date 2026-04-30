@@ -103,19 +103,17 @@
         .img-2 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD2.png?raw=true'); }
         .img-3 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD3.png?raw=true'); }
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
-
-        #player {
+#player {
     position: absolute;
     bottom: 0;
     left: 30px;
-    width: 80px;  /* Taille augmentée pour Béné */
-    height: 110px; /* Taille augmentée pour Béné */
+    width: 90px;   /* Un peu plus large pour ne pas couper les coudes */
+    height: 120px;  /* On monte à 120px pour qu'il soit vraiment imposant */
     z-index: 20;
-    background-size: contain; /* Assure que le sprite ne soit pas écrasé */
+    background-size: 100% 100%; /* Force le sprite à prendre toute la place */
     background-repeat: no-repeat;
     background-position: center bottom;
     image-rendering: pixelated;
-    /* Transition légère pour lisser la trajectoire plus longue du saut */
     transition: bottom 0.02s linear; 
 }
         
@@ -261,7 +259,7 @@
     function jump() { 
         if (!gameActive || isJumping || isDancing) return; 
         isJumping = true; 
-        vy = 12; 
+        vy = 9; 
     }
 
     function manageItems() {
