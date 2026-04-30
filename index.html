@@ -205,11 +205,26 @@
     const meme = document.getElementById('meme');
 
     // Chemins vers tes nouveaux Sprites
-    const spriteWalk = "https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%201(4).png?raw=true";
-    const spriteJump = ["https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true", "https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%202%20(2).png?raw=true"];
-    const spriteDance = ["https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true", "https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true", "https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true"];
-    const spriteAction = ["url('Action 1 (4).png')", "url('Action 2 (4).png')", "url('Action 3 (4).png')", "url('Action 4(4).png')"];
-
+    // Chemins corrigés avec url('') pour l'affichage CSS
+    const spriteWalk = "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%201(4).png?raw=true')";
+    
+    const spriteJump = [
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true')", 
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%202%20(2).png?raw=true')"
+    ];
+    
+    const spriteDance = [
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true')", 
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true')", 
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true')"
+    ];
+    
+    const spriteAction = [
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%201%20(4).png?raw=true')",
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%202%20(4).png?raw=true')",
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%203%20(4).png?raw=true')",
+        "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%204(4).png?raw=true')"
+    ];
     let gameActive = false, swagScore = 0, gameInterval, platformSpawner, animFrame = 0, isDancing = false;
     let playerY = 0, vy = 0, gravity = 0.5, isJumping = false, platforms = [], stairLevel = 0;
 
