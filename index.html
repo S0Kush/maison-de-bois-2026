@@ -129,8 +129,14 @@
             position: absolute; top: 0; left: 0; height: 100%; width: 600%; 
             display: flex; will-change: transform; pointer-events: none; z-index: 1;
         }
-        .bg-slice { width: 16.66%; height: 100%; background-size: cover; background-position: center bottom; }
-
+        .bg-slice { 
+    width: 16.66%; 
+    height: 100%; 
+    /* On force l'image à s'afficher entièrement dans sa tranche */
+    background-size: 100% 100%; 
+    background-position: center;
+    background-repeat: no-repeat;
+}
         .img-1 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD1.jpg?raw=true'); }
         .img-2 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD2.jpg?raw=true'); }
         .img-3 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD3.jpg?raw=true'); }
@@ -180,6 +186,17 @@
         .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; z-index: 40; }
         .hint-text { font-size: 0.7rem; color: var(--yellow); margin-top: 10px; display: none; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        @media screen and (max-width: 900px) and (orientation: landscape) {
+    #main-container {
+        width: 95%;
+        padding: 10px;
+    }
+    .status-screen {
+        height: 200px; /* On gagne de la place pour le décor */
+    }
+    h1 { font-size: 1.5rem; }
+}
     </style>
 </head>
 <body>
