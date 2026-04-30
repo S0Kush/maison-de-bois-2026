@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MAISON DE BOIS - 2008-2018 EXPERIENCE</title>
     <style>
+
+        @keyframes itemGlow {
+    0% { filter: drop-shadow(0 0 5px var(--cyan)); transform: scale(1); }
+    50% { filter: drop-shadow(0 0 15px var(--yellow)); transform: scale(1.1); }
+    100% { filter: drop-shadow(0 0 5px var(--cyan)); transform: scale(1); }
+}
+
+.swag-item {
+    /* ... tes propriétés actuelles ... */
+    animation: itemGlow 1.5s infinite ease-in-out;
+}
+
+/* Style pour les messages flottants */
+.swag-popup {
+    position: absolute;
+    color: var(--yellow);
+    font-family: 'Retro', sans-serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    text-shadow: 2px 2px 0px var(--pink);
+    pointer-events: none;
+    z-index: 100;
+    animation: floatUp 0.8s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
+
+
+
         @font-face {
             font-family: 'Retro';
             src: local('Impact'), local('Arial Black');
@@ -195,6 +227,7 @@
 </div>
 
 <script>
+    const swagPhrases = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
     const screen = document.getElementById('screen');
     const btn = document.getElementById('main-btn');
     const lcdText = document.getElementById('lcd-text');
@@ -301,13 +334,36 @@
     }
 
     function collectItem(item) {
-        collectedIds.add(item.id);
-        item.el.remove();
-        activeItems = activeItems.filter(i => i.id !== item.id);
-        // Bonus de swag visuel
-        gameFill.style.filter = "brightness(2)";
-        setTimeout(() => gameFill.style.filter = "none", 200);
-    }
+    collectedIds.add(item.id);
+    
+    // On génère un nouvel index aléatoire à CHAQUE ramassage
+    const randomIndex = Math.floor(Math.random() * swagPhrases.length);
+    const chosenPhrase = swagPhrases[randomIndex];
+    
+    // Création du message flottant
+    const popup = document.createElement('div');
+    popup.className = 'swag-popup';
+    
+    // On positionne le texte par rapport à l'objet
+    popup.style.left = item.el.style.left;
+    popup.style.bottom = (parseInt(item.el.style.bottom) + 50) + 'px';
+    
+    // On injecte la phrase aléatoire
+    popup.innerText = chosenPhrase;
+    gameArea.appendChild(popup);
+    
+    // On retire le message après l'animation
+    setTimeout(() => {
+        if (popup.parentNode) popup.remove();
+    }, 800);
+
+    item.el.remove();
+    activeItems = activeItems.filter(i => i.id !== item.id);
+    
+    // Effet visuel
+    gameFill.style.filter = "brightness(2)";
+    setTimeout(() => gameFill.style.filter = "none", 200);
+}
 
     function gameLoop() {
         if (!gameActive) return;
@@ -359,4 +415,3 @@
 </script>
 </body>
 </html>
-
