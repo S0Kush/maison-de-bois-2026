@@ -321,7 +321,7 @@ const trashPhrases = ["C'EST NUL !", "PAS SWAG...", "LA HONTE !", "ZÉRO STYLE",
 
 const allObjectsConfig = [...swagObjectsConfig, ...trashObjectsConfig];
     let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
-    let playerY = 0, vy = 0, gravity = 0.35, isJumping = false;
+    let playerY = 0, vy = 0, gravity = 0.28, isJumping = false;
     let activeItems = [], collectedIds = new Set();
     let lastTime = 0;
 const fpsTarget = 60; // On cible la vitesse normale
@@ -355,7 +355,7 @@ const frameMs = 1000 / fpsTarget;
     function jump() { 
         if (!gameActive || isJumping || isDancing) return; 
         isJumping = true; 
-        vy = 9; 
+        vy = 8; 
     }
 
 function manageItems() {
@@ -525,6 +525,18 @@ function collectTrash(item) {
     }
 
     requestAnimationFrame(smoothLoop);
+}
+function handleJump() {
+    if (isJumping) {
+        playerY += verticalVelocity;
+        verticalVelocity += gravity; // La gravité tire Béné vers le bas
+
+        if (playerY <= 0) {
+            playerY = 0;
+            isJumping = false;
+            verticalVelocity = 0;
+        }
+    }
 }
 </script>
 </body>
