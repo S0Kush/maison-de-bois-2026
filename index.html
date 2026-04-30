@@ -43,6 +43,21 @@
             pointer-events: none; z-index: 50;
         }
 
+        .shape {
+            position: absolute; z-index: -1; opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+        .shape-glitch { animation: float 15s infinite alternate-reverse, glitchPulse 3s infinite; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            100% { transform: translate(150px, -100px) rotate(360deg) scale(1.2); }
+        }
+        @keyframes glitchPulse {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--cyan)); }
+            50% { filter: drop-shadow(0 0 15px var(--pink)); }
+        }
+
         #main-container {
             text-align: center; border: 2px solid var(--cyan); padding: 25px;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
@@ -90,9 +105,8 @@
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
 
         #player {
-            position: absolute; bottom: 0; left: 30px; 
-            width: 80px; height: 110px; /* Taille augmentée pour KEMCY */
-            z-index: 20; background-size: contain; background-repeat: no-repeat;
+            position: absolute; bottom: 0; left: 30px; width: 65px; height: 85px;
+            z-index: 20; background-size: 100% 100%; background-repeat: no-repeat;
             background-position: center bottom; image-rendering: pixelated; 
         }
         
@@ -114,6 +128,7 @@
             text-transform: uppercase; box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
             font-family: 'Retro', sans-serif; animation: pulseBtn 2s infinite;
         }
+        @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
         #links-container { display: none; flex-direction: column; gap: 15px; width: 100%; margin-top: 10px; }
         .link-btn {
@@ -121,12 +136,19 @@
             font-weight: 900; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
             transition: 0.2s; font-family: 'Retro', sans-serif; font-size: 1.1rem; text-transform: uppercase;
         }
+        .link-btn:hover { transform: skew(-5deg) scale(1.02); background: var(--yellow); box-shadow: 5px 5px 0px var(--pink); }
+
         .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; z-index: 40; }
+        .hint-text { font-size: 0.7rem; color: var(--yellow); margin-top: 10px; display: none; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
 <div class="scanlines"></div>
+
+<svg class="shape" style="top:5%; left:5%; width:150px;" viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="10 5"/></svg>
+<svg class="shape shape-glitch" style="bottom:10%; right:5%; width:180px;" viewBox="0 0 200 200"><rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" /></svg>
 
 <div id="main-container">
     <h1>MAISON DE BOIS</h1>
@@ -156,10 +178,12 @@
         <img id="meme" class="meme-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif">
     </div>
 
+    <div id="hint" class="hint-text">TAP TO COLLECT SWAG!</div>
     <button id="main-btn" class="action-btn" onclick="startSequence()">BOOT SYSTEM</button>
 
     <div id="links-container">
         <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" target="_blank">🎟️ BILLETTERIE DICE</a>
+        <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink); color: white;" target="_blank">📸 INSTAGRAM POST</a>
     </div>
 </div>
 
@@ -174,24 +198,23 @@
     const gameUI = document.getElementById('game-ui');
     const gameFill = document.getElementById('game-fill');
     const player = document.getElementById('player');
+    const hint = document.getElementById('hint');
     const links = document.getElementById('links-container');
     const meme = document.getElementById('meme');
 
-    // NOUVEAUX SPRITES KEMCY (Marche à 4 frames)
-    const spriteWalk = [
-        "url('https://replicate.delivery/xpb3/hHeg9R8B6P02FC06vMOf5oO0C8C7VfGof5PebY668m9qf5XSA/out-0.webp')",
-        "url('https://replicate.delivery/xpb3/MvI1f5W9C0veV69fQ7R06Peb86Q8C7fGof5PebY668m9qf5XSA/out-1.webp')",
-        "url('https://replicate.delivery/xpb3/pPeb86Q8C7fGof5PebY668m9qf5XSA/out-2.webp')",
-        "url('https://replicate.delivery/xpb3/V69fQ7R06Peb86Q8C7fGof5PebY668m9qf5XSA/out-3.webp')"
-    ];
-    
-    const spriteJump = "url('https://replicate.delivery/xpb3/hHeg9R8B6P02FC06vMOf5oO0C8C7VfGof5PebY668m9qf5XSA/out-0.webp')";
-    const spriteDance = spriteWalk; // Utilisation de la marche pour la danse en boucle
+    const spriteWalk = "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%201(4).png?raw=true')";
+    const spriteJump = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true')"];
+    const spriteDance = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true')"];
+    const spriteAction = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%201%20(4).png?raw=true')"];
 
     // CONFIGURATION DES OBJETS (Assignation spécifique)
+    // x: Position sur le fond (0 à 6000 env), y: hauteur depuis le sol
     const swagObjectsConfig = [
-        { id: 'obj1', x: 800, y: 40, img: "url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif')" },
-        { id: 'obj2', x: 2000, y: 120, img: "url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif')" }
+        { id: 'obj1', x: 800, y: 40, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/WATIB.png?raw=true')" },
+        { id: 'obj2', x: 1500, y: 120, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/PETSHOP.png?raw=true')" },
+        { id: 'obj3', x: 2200, y: 60, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/LUNETTE%20SWAG.png?raw=true')" },
+        { id: 'obj4', x: 3500, y: 100, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/IPOD.png?raw=true')" },
+        { id: 'obj5', x: 4800, y: 40, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/HANDSPINNER.png?raw=true')" }
     ];
 
     let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
@@ -216,7 +239,7 @@
     }
 
     function startGame() {
-        gameArea.style.display = 'block'; gameUI.style.display = 'block';
+        gameArea.style.display = 'block'; gameUI.style.display = 'block'; hint.style.display = 'block';
         gameActive = true; 
         gameInterval = setInterval(gameLoop, 16);
     }
@@ -228,9 +251,12 @@
     }
 
     function manageItems() {
-        const bgOffset = swagScore * 30;
+        const bgOffset = swagScore * 30; // Vitesse du fond
+
         swagObjectsConfig.forEach(obj => {
             const currentX = obj.x - bgOffset;
+            
+            // Si l'objet entre dans l'écran et n'a pas été ramassé
             if (currentX < screen.offsetWidth + 50 && currentX > -50 && !collectedIds.has(obj.id)) {
                 let item = activeItems.find(i => i.id === obj.id);
                 if (!item) {
@@ -241,18 +267,40 @@
                     item = { el, id: obj.id, x: obj.x, y: obj.y };
                     activeItems.push(item);
                 }
+                
+                // Positionnement et animation sautillante
+                const bounce = Math.sin(animFrame * 0.1) * 10;
                 item.el.style.left = currentX + 'px';
-                item.el.style.bottom = obj.y + 'px';
+                item.el.style.bottom = (obj.y + bounce) + 'px';
+
+                // Collision avec le perso (zone de contact env 50px)
                 if (currentX < 80 && currentX > 10 && Math.abs(playerY - obj.y) < 60) {
-                    collectedIds.add(obj.id);
-                    item.el.remove();
+                    collectItem(item);
+                }
+            } else {
+                // Supprimer si hors écran
+                const index = activeItems.findIndex(i => i.id === obj.id);
+                if (index > -1) {
+                    activeItems[index].el.remove();
+                    activeItems.splice(index, 1);
                 }
             }
         });
     }
 
+    function collectItem(item) {
+        collectedIds.add(item.id);
+        item.el.remove();
+        activeItems = activeItems.filter(i => i.id !== item.id);
+        // Bonus de swag visuel
+        gameFill.style.filter = "brightness(2)";
+        setTimeout(() => gameFill.style.filter = "none", 200);
+    }
+
     function gameLoop() {
         if (!gameActive) return;
+        
+        // Physique
         vy -= gravity; playerY += vy;
         if (playerY <= 0) { playerY = 0; vy = 0; isJumping = false; }
         player.style.bottom = playerY + 'px';
@@ -263,34 +311,32 @@
             gameFill.style.width = swagScore + '%';
             bgLayer.style.transform = `translateX(-${swagScore * 0.833}%)`;
             
-            manageItems();
+            manageItems(); // Gestion des objets Swag
 
             if (swagScore >= 100) startDance();
             
-            // ANIMATION DE MARCHE KEMCY
+            // Animation perso
             if (isJumping) {
-                player.style.backgroundImage = spriteJump;
+                player.style.backgroundImage = spriteJump[0];
             } else {
-                // Change de frame toutes les 10 frames de jeu pour une marche fluide
-                let frameIndex = Math.floor(animFrame / 10) % 4;
-                player.style.backgroundImage = spriteWalk[frameIndex];
+                let currentSprite = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : (spriteAction[0] || spriteWalk);
+                player.style.backgroundImage = currentSprite;
             }
         } else {
-            let frameIndex = Math.floor(animFrame / 8) % 4;
-            player.style.backgroundImage = spriteDance[frameIndex];
+            player.style.backgroundImage = spriteDance[Math.floor(animFrame/10)%3];
         }
     }
 
     function startDance() {
         isDancing = true; 
         activeItems.forEach(i => i.el.remove());
-        player.style.left = "calc(50% - 40px)"; playerY = 0;
+        player.style.left = "calc(50% - 32px)"; playerY = 0;
         setTimeout(endSequence, 4000);
     }
 
     function endSequence() {
         gameActive = false; clearInterval(gameInterval);
-        gameArea.style.display = 'none'; gameUI.style.display = 'none';
+        gameArea.style.display = 'none'; gameUI.style.display = 'none'; hint.style.display = 'none';
         screen.style.height = '160px';
         setTimeout(() => {
             lcdText.style.display = 'block'; lcdText.innerHTML = "PARTY LOADED!";
