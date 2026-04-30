@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAISON DE BOIS - 2008-2018 EXPERIENCE</title>
+    <style>
+        @font-face {
+            font-family: 'Retro';
+            src: local('Impact'), local('Arial Black');
+        }
+
+        :root {
+            --pink: #ff00ff;
+            --green: #00ff00;
+            --purple: #8a2be2;
+            --cyan: #00ffff;
+            --yellow: #ffff00;
+        }
+
+        body {
+            background-color: #000;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            /* Fond dégradé dynamique */
+            background: linear-gradient(45deg, #000, #1a0033, #001a1a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Formes géométriques flottantes (Vecteurs) */
+        .shape {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.6;
+            filter: blur(1px);
+            animation: float 20s infinite alternate;
+        }
+
+        @keyframes float {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(100px, 100px) rotate(360deg); }
+        }
+
+        /* Design du container style "Media Player" brillant */
+        #game-container {
+            text-align: center;
+            border: 4px solid #fff;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.3);
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            border: 2px solid var(--cyan);
+        }
+
+        h1 {
+            font-family: 'Retro', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to bottom, #fff 0%, var(--pink) 50%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 0px var(--cyan));
+            font-style: italic;
+        }
+
+        /* Ecran LCD */
+        .status-screen {
+            background: linear-gradient(180deg, #111, #222);
+            border: 3px solid var(--pink);
+            border-radius: 10px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+            box-shadow: inset 0 0 15px #000;
+        }
+
+        /* Bouton brillant Y2K */
+        .button {
+            background: linear-gradient(to bottom, var(--cyan), var(--purple));
+            color: white;
+            border: 2px solid #fff;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 50px;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+            transition: 0.2s;
+            font-family: 'Retro', sans-serif;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        #links {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .link-btn {
+            text-decoration: none;
+            padding: 15px;
+            background: var(--green);
+            color: black;
+            font-weight: 900;
+            border-radius: 5px;
+            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); /* Forme géométrique */
+            transition: 0.3s;
+        }
+
+        .link-btn:hover {
+            transform: skew(-10deg);
+            background: var(--yellow);
+            box-shadow: 5px 5px 0px var(--pink);
+        }
+
+        /* GIF MEME (Optionnel : remplace les sources par des vrais gifs) */
+        .meme-gif {
+            width: 80px;
+            position: absolute;
+            display: none;
+        }
+
+        #progress-bar {
+            width: 80%;
+            height: 15px;
+            background: #444;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+            border: 1px solid #fff;
+        }
+
+        #progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--cyan));
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Vecteurs décoratifs -->
+<svg class="shape" style="top:10%; left:5%; width:200px;" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="2" fill="none" />
+    <path d="M10,100 Q100,10 190,100" stroke="var(--pink)" fill="none" />
+</svg>
+<svg class="shape" style="bottom:10%; right:5%; width:150px; animation-duration: 15s;" viewBox="0 0 200 200">
+    <rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" />
+</svg>
+
+<div id="game-container">
+    <h1>MAISON DE BOIS</h1>
+    <div style="font-weight: bold; color: var(--yellow); font-size: 0.8rem;">BIEN PUBLIC • BORDEAUX • 07.05.26</div>
+    
+    <div class="status-screen">
+        <div id="status-text" style="color: var(--cyan); font-weight: bold;">[ SYSTEM STATUS: SWAGGY ]</div>
+        <div id="progress-bar"><div id="progress-fill"></div></div>
+        
+        <!-- Emplacement pour un GIF iconique (ex: Nyan Cat ou Dancing Baby) -->
+        <img id="meme" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif" style="width: 50px; margin-top: 10px; display:none;">
+    </div>
+
+    <button id="main-btn" class="button" onclick="startLoading()">CLICK TO UNLOCK</button>
+
+    <div id="links">
+        <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" target="_blank">🎟️ BILLETTERIE DICE</a>
+        <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink); color: white;" target="_blank">📸 INSTAGRAM POST</a>
+    </div>
+</div>
+
+<script>
+    function startLoading() {
+        const btn = document.getElementById('main-btn');
+        const status = document.getElementById('status-text');
+        const progress = document.getElementById('progress-bar');
+        const fill = document.getElementById('progress-fill');
+        const links = document.getElementById('links');
+        const meme = document.getElementById('meme');
+
+        btn.style.display = 'none';
+        status.innerHTML = "INJECTING SWAG...";
+        progress.style.display = 'block';
+
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                status.innerHTML = "PARTY LOADED !";
+                status.style.color = "var(--green)";
+                progress.style.display = 'none';
+                meme.style.display = 'block';
+                links.style.display = 'flex';
+            } else {
+                width += Math.random() * 10;
+                if (width > 100) width = 100;
+                fill.style.width = width + '%';
+            }
+        }, 120);
+    }
+</script>
+
+</body>
+</html>
