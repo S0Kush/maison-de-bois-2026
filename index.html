@@ -107,14 +107,14 @@
     position: absolute;
     bottom: 0;
     left: 30px;
-    width: 100px;   /* Un peu plus large pour ne pas couper les coudes */
-    height: 120px;  /* On monte à 120px pour qu'il soit vraiment imposant */
+    height: 160px; /* On l'agrandit nettement */
+    aspect-ratio: 1 / 1; /* Force un carré parfait pour éviter l'écrasement */
     z-index: 20;
-    background-size: 100% 100%; /* Force le sprite à prendre toute la place */
+    background-size: contain; 
     background-repeat: no-repeat;
     background-position: center bottom;
     image-rendering: pixelated;
-    transition: bottom 0.02s linear; 
+    transition: bottom 0.02s linear;
 }
         
         .swag-item {
@@ -359,3 +359,4 @@
 </script>
 </body>
 </html>
+
