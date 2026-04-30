@@ -298,12 +298,15 @@
             if (swagScore >= 100) startDance();
             
             // Animation pendant le jeu
-            if (isJumping) {
-                player.style.backgroundImage = spriteJump[0];
-            } else {
-                // Alterne entre l'image de marche et une image d'action pour le mouvement
-                player.style.backgroundImage = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : spriteAction[0];
-            }
+            // Remplace la partie animation dans le gameLoop par ceci :
+if (isJumping) {
+    player.style.backgroundImage = spriteJump[0];
+} else {
+    // On alterne entre marche et action pour simuler le mouvement
+    // Si spriteAction[0] n'est pas prêt, on reste sur spriteWalk
+    let currentSprite = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : (spriteAction[0] || spriteWalk);
+    player.style.backgroundImage = currentSprite;
+}
         } else {
             // Animation de danse finale
             player.style.backgroundImage = spriteDance[Math.floor(animFrame/10)%3];
