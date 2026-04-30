@@ -35,7 +35,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Scanlines TV */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
@@ -44,7 +43,6 @@
             pointer-events: none; z-index: 50;
         }
 
-        /* Formes géométriques flottantes enrichies */
         .shape {
             position: absolute; z-index: -1; opacity: 0.5;
             animation: float 20s infinite alternate ease-in-out;
@@ -60,12 +58,11 @@
             50% { filter: drop-shadow(0 0 15px var(--pink)); }
         }
 
-        /* Container Principal (Media Player) */
         #main-container {
             text-align: center; border: 2px solid var(--cyan); padding: 25px;
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
             border-radius: 20px; box-shadow: 0 0 40px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
-            max-width: 450px; width: 90%; position: relative; z-index: 10;
+            max-width: 600px; width: 90%; position: relative; z-index: 10;
         }
 
         h1 {
@@ -75,20 +72,18 @@
             filter: drop-shadow(2px 2px 0px var(--cyan)); font-style: italic;
         }
 
-        /* Ecran LCD Multi-fonctions - AVEC TRANSITION DE TAILLE */
         .status-screen {
             background: linear-gradient(180deg, #0a0a0a, #1a1a1a);
             border: 3px solid var(--pink); border-radius: 10px; 
-            height: 160px; /* Taille de base */
+            height: 160px; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             margin: 20px 0; position: relative; box-shadow: inset 0 0 20px #000;
             overflow: hidden;
-            transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); /* Animation d'ouverture du jeu */
+            transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .lcd-text { color: var(--cyan); font-weight: bold; font-size: 0.9rem; text-shadow: 0 0 5px var(--cyan); margin-bottom: 15px; }
 
-        /* UI: Barre de progression incurvée */
         .progress-bar-curved {
             width: 80%; height: 15px; background: rgba(255,255,255,0.1);
             border-radius: 50px; overflow: hidden; border: 1px solid var(--cyan);
@@ -96,36 +91,27 @@
         }
         .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.2s; }
 
-        /* UI: Jeu Test - Redimensionné */
         #game-area { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: rgba(0, 255, 255, 0.05); }
         
-        /* -------------------------------------
-           INTÉGRATION DU PARALLAX BACKGROUND
-        -------------------------------------- */
+        /* Modifié pour 6 tranches (boucle) */
         #background-layer { 
-            position: absolute; top: 0; left: 0; height: 100%; width: 400%; /* 4 images = 400% */
-            display: flex; will-change: transform; pointer-events: none; z-index: 1;
+            position: absolute; top: 0; left: 0; height: 100%; width: 600%; 
+            display: flex;监测 will-change: transform; pointer-events: none; z-index: 1;
         }
-        .bg-slice { 
-            width: 25%; height: 100%; 
-            background-size: cover; background-position: center bottom;
-        }
-        /* /!\ REMPLACE CES LIENS PAR TES LIENS GITHUB "RAW" /!\ */
-        .img-1 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD1.png?raw=true'); } /* Librairie/Cafe */
-        .img-2 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD2.png?raw=true'); } /* Atelier */
-        .img-3 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD3.png?raw=true'); } /* Studio 24 */
-        .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); } /* BIEN PUBLIC (Final) */
+        .bg-slice { width: 16.66%; height: 100%; background-size: cover; background-position: center bottom; }
 
-        /* BÉNÉ SPRITE CUSTOM */
+        .img-1 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD1.png?raw=true'); }
+        .img-2 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD2.png?raw=true'); }
+        .img-3 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD3.png?raw=true'); }
+        .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
+
         #player {
             position: absolute; bottom: 0; left: 30px; width: 40px; height: 50px;
             z-index: 20; display: flex; justify-content: center; align-items: center;
             font-size: 2.2rem; transition: left 1s ease-in-out;
-            /* On enlève le carré rose de base pour laisser place au sprite */
-            background: transparent; border: none; box-shadow: none;
+            background: transparent; border: none;
         }
         
-        /* Les marches de l'escalier */
         .platform { 
             position: absolute; bottom: 0; 
             background: rgba(0, 255, 255, 0.2); 
@@ -133,13 +119,11 @@
             box-shadow: 0 0 15px rgba(0,255,255,0.3); z-index: 15;
         }
 
-        /* Ligne de sol de base */
         .ground-line {
             position: absolute; bottom: 0; width: 100%; height: 2px;
             background: var(--pink); box-shadow: 0 0 10px var(--pink); z-index: 10;
         }
 
-        /* Boutons */
         .action-btn {
             background: linear-gradient(to bottom, var(--cyan), var(--purple));
             color: white; border: 2px solid #fff; padding: 15px 30px;
@@ -148,9 +132,7 @@
             font-family: 'Retro', sans-serif; animation: pulseBtn 2s infinite;
         }
         @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        .action-btn:active { transform: scale(0.95); animation: none; }
 
-        /* Liens de fin */
         #links-container { display: none; flex-direction: column; gap: 15px; width: 100%; margin-top: 10px; }
         .link-btn {
             text-decoration: none; padding: 15px; background: var(--green); color: black;
@@ -160,64 +142,46 @@
         .link-btn:hover { transform: skew(-5deg) scale(1.02); background: var(--yellow); box-shadow: 5px 5px 0px var(--pink); }
 
         .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; z-index: 40; }
-        
         .hint-text { font-size: 0.7rem; color: var(--yellow); margin-top: 10px; display: none; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
     </style>
 </head>
 <body>
 
 <div class="scanlines"></div>
 
-<!-- Vecteurs décoratifs Background -->
-<svg class="shape" style="top:5%; left:5%; width:150px;" viewBox="0 0 200 200">
-    <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="10 5"/>
-</svg>
-<svg class="shape shape-glitch" style="bottom:10%; right:5%; width:180px;" viewBox="0 0 200 200">
-    <rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" />
-</svg>
-<svg class="shape" style="top:40%; right:15%; width:80px;" viewBox="0 0 100 100">
-    <polygon points="50,10 90,90 10,90" stroke="var(--pink)" stroke-width="2" fill="none"/>
-</svg>
-<svg class="shape shape-glitch" style="bottom:20%; left:10%; width:100px;" viewBox="0 0 100 100">
-    <line x1="20" y1="20" x2="80" y2="80" stroke="var(--yellow)" stroke-width="3" />
-    <line x1="80" y1="20" x2="20" y2="80" stroke="var(--yellow)" stroke-width="3" />
-</svg>
+<svg class="shape" style="top:5%; left:5%; width:150px;" viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="10 5"/></svg>
+<svg class="shape shape-glitch" style="bottom:10%; right:5%; width:180px;" viewBox="0 0 200 200"><rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" /></svg>
 
 <div id="main-container">
     <h1>MAISON DE BOIS</h1>
     <div style="font-weight: bold; color: var(--yellow); font-size: 0.75rem; letter-spacing: 2px;">BIEN PUBLIC • BORDEAUX • 07.05</div>
     
     <div class="status-screen" id="screen" onclick="jump()" ontouchstart="jump()">
-        <!-- Phase 1 : Attente / Chargement -->
         <div id="lcd-text" class="lcd-text">[ SYSTEM STATUS: IDLE ]</div>
-        
         <div id="loading-bar" class="progress-bar-curved"><div id="loading-fill" class="progress-fill"></div></div>
         
-        <!-- Phase 2 : Jeu -->
         <div id="game-ui" style="display:none; width: 100%; position: absolute; top: 10px; text-align: center; z-index: 30;">
             <div style="font-size: 0.6rem; color: var(--cyan); margin-bottom: 5px;">SWAG LEVEL</div>
             <div class="progress-bar-curved" style="display: inline-block; width: 70%; height: 10px; border-radius: 50px;"><div id="game-fill" class="progress-fill"></div></div>
         </div>
+
         <div id="game-area">
-            <!-- Arrière-plan défilant -->
             <div id="background-layer">
                 <div class="bg-slice img-1"></div>
                 <div class="bg-slice img-2"></div>
                 <div class="bg-slice img-3"></div>
+                <div class="bg-slice img-1"></div>
+                <div class="bg-slice img-2"></div>
                 <div class="bg-slice img-4"></div>
             </div>
             <div class="ground-line"></div>
             <div id="player">🕺</div>
         </div>
-
-        <!-- GIF de Fin -->
         <img id="meme" class="meme-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif">
     </div>
 
     <div id="hint" class="hint-text">TAP TO CLIMB THE VIBE!</div>
-
     <button id="main-btn" class="action-btn" onclick="startSequence()">BOOT SYSTEM</button>
 
     <div id="links-container">
@@ -232,233 +196,102 @@
     const lcdText = document.getElementById('lcd-text');
     const loadBar = document.getElementById('loading-bar');
     const loadFill = document.getElementById('loading-fill');
-    
     const gameArea = document.getElementById('game-area');
     const bgLayer = document.getElementById('background-layer');
     const gameUI = document.getElementById('game-ui');
     const gameFill = document.getElementById('game-fill');
     const player = document.getElementById('player');
     const hint = document.getElementById('hint');
-
     const links = document.getElementById('links-container');
     const meme = document.getElementById('meme');
 
-    const loadMessages = ["INJECTING SWAG...", "CALIBRATING BÉNÉ...", "BUILDING STAIRS...", "UNLOCKING 2008 VIBES..."];
-
-    // SPRITES ET COULEURS (Béné)
     const walkSprites = ["🚶", "🏃", "🚶", "👟"];
     const jumpSprites = ["🆙", "🚀"];
-    const danceSprites = ["🕺", "✨", "🕴️", "🔥", "🙌", "💫", "👑"];
+    const danceSprites = ["🕺", "✨", "🕴️", "🔥", "🙌"];
     const colors = ["var(--cyan)", "var(--pink)", "var(--green)", "var(--yellow)", "var(--purple)"];
 
-    // Variables du Jeu
-    let gameActive = false;
-    let swagScore = 0;
-    let gameInterval;
-    let platformSpawner;
-    let animFrame = 0;
-    let isDancing = false;
+    let gameActive = false, swagScore = 0, gameInterval, platformSpawner, animFrame = 0, isDancing = false;
+    let playerY = 0, vy = 0, gravity = 0.5, isJumping = false, platforms = [], stairLevel = 0;
 
-    // Variables Physiques (Béné recalibré)
-    let playerY = 0;
-    let vy = 0;
-    let gravity = 0.75; // Gravité réduite pour planer un peu plus
-    let isJumping = false;
-    let platforms = [];
-    let stairLevel = 0;
-
-    // --- PHASE 1 : BOOT ---
     function startSequence() {
         btn.style.display = 'none';
         loadBar.style.display = 'block';
-        
-        let width = 0; let msgIndex = 0;
-        const textInterval = setInterval(() => {
-            msgIndex = (msgIndex + 1) % loadMessages.length;
-            lcdText.innerHTML = loadMessages[msgIndex];
-        }, 800);
-
+        let width = 0;
         const loadInterval = setInterval(() => {
             if (width >= 100) {
                 clearInterval(loadInterval);
-                clearInterval(textInterval);
-                prepareGame();
+                lcdText.style.display = 'none'; loadBar.style.display = 'none';
+                screen.style.height = '320px'; // AGARNDI POUR PC
+                setTimeout(startGame, 600);
             } else {
-                width += Math.random() * 8;
-                if (width > 100) width = 100;
-                loadFill.style.width = width + '%';
+                width += 5; loadFill.style.width = width + '%';
+                lcdText.innerHTML = "LOADING SWAG...";
             }
-        }, 150);
+        }, 100);
     }
 
-    // --- TRANSITION : AGRANDISSEMENT DE L'ÉCRAN ---
-    function prepareGame() {
-        lcdText.style.display = 'none';
-        loadBar.style.display = 'none';
-        
-        // On agrandit la fenêtre (le reste du menu ne bouge pas)
-        screen.style.height = '280px'; 
-        
-        // On attend la fin de l'animation CSS (0.6s) avant de lancer l'action
-        setTimeout(startGame, 600);
-    }
-
-    // --- PHASE 2 : JEU (ESCALIERS & PARALLAX) ---
     function startGame() {
-        gameArea.style.display = 'block';
-        gameUI.style.display = 'block';
-        hint.style.display = 'block';
-        gameActive = true;
-        
-        // Lancement du moteur physique (60 FPS)
-        gameInterval = setInterval(gameLoop, 16);
-        spawnPlatform();
+        gameArea.style.display = 'block'; gameUI.style.display = 'block'; hint.style.display = 'block';
+        gameActive = true; gameInterval = setInterval(gameLoop, 16); spawnPlatform();
     }
 
-    function jump() {
-        if (!gameActive || isJumping || isDancing) return;
-        isJumping = true;
-        vy = 11.5; // Impulsion recalibrée (moins haute mais trajectoire adoucie par la gravité)
-    }
+    function jump() { if (!gameActive || isJumping || isDancing) return; isJumping = true; vy = 10; }
 
     function spawnPlatform() {
         if (!gameActive || isDancing) return;
-        
-        // Logique de l'escalier (0, 30px, 60px, 90px de haut)
-        stairLevel++;
-        if (stairLevel > 3) stairLevel = 0; // Redescend à 0
-        
-        let h = stairLevel * 35; 
-        let w = 100; // Largeur de la marche
-        
+        stairLevel = (stairLevel + 1) % 4;
+        let h = stairLevel * 35;
         if (h > 0) {
             let p = document.createElement('div');
-            p.className = 'platform';
-            p.style.height = h + 'px';
-            p.style.width = w + 'px';
-            p.style.left = '100%';
+            p.className = 'platform'; p.style.height = h + 'px'; p.style.width = '100px'; p.style.left = '100%';
             gameArea.appendChild(p);
-            
-            platforms.push({el: p, x: screen.offsetWidth, w: w, h: h});
+            platforms.push({el: p, x: screen.offsetWidth, w: 100, h: h});
         }
-        
-        // Vitesse de génération des marches
-        platformSpawner = setTimeout(spawnPlatform, 900);
+        platformSpawner = setTimeout(spawnPlatform, 1100);
     }
 
     function gameLoop() {
         if (!gameActive) return;
         let groundH = 0;
-
-        // Déplacement et gestion des escaliers
         for (let i = platforms.length - 1; i >= 0; i--) {
             let p = platforms[i];
-            p.x -= 3.5; // Vitesse de défilement (Ton réglage d'origine)
+            p.x -= 2.5; // RALENTI
             p.el.style.left = p.x + 'px';
-
-            // Collision X (Le joueur est entre 30px et 70px)
-            if (p.x < 70 && p.x + p.w > 30) {
-                groundH = Math.max(groundH, p.h);
-            }
-
-            // Nettoyage
-            if (p.x < -100) {
-                if (gameArea.contains(p.el)) gameArea.removeChild(p.el);
-                platforms.splice(i, 1);
-            }
+            if (p.x < 70 && p.x + p.w > 30) groundH = Math.max(groundH, p.h);
+            if (p.x < -100) { p.el.remove(); platforms.splice(i, 1); }
         }
-
-        // Physique de Béné (Gravité)
-        vy -= gravity;
-        playerY += vy;
-
-        // Gestion du sol et des marches
-        if (playerY <= groundH) {
-            playerY = groundH;
-            vy = 0;
-            isJumping = false;
-        } else if (!isJumping && playerY > groundH) {
-             isJumping = true; // Tombe d'une marche
-        }
-
-        // Auto-grimpette (si Béné fonce dans une marche sans sauter)
-        if (playerY < groundH) {
-            playerY = groundH;
-            vy = 0;
-            isJumping = false;
-        }
-
+        vy -= gravity; playerY += vy;
+        if (playerY <= groundH) { playerY = groundH; vy = 0; isJumping = false; }
         player.style.bottom = playerY + 'px';
-
-        // ------------------------------------
-        // ANIMATION SPRITES & FOND
-        // ------------------------------------
         animFrame++;
-        if (isDancing) {
-            let dIdx = Math.floor(animFrame / 10) % danceSprites.length; 
-            player.innerHTML = danceSprites[dIdx];
-            player.style.color = colors[dIdx % colors.length];
-        } else if (isJumping) {
-            player.innerHTML = jumpSprites[vy > 0 ? 0 : 1];
-            player.style.color = "var(--cyan)";
-        } else {
-            let wIdx = Math.floor(animFrame / 15) % walkSprites.length; 
-            player.innerHTML = walkSprites[wIdx];
-            player.style.color = "white";
-        }
 
         if (!isDancing) {
-            // Progression de la jauge SWAG
-            swagScore += 0.12;
+            swagScore += 0.08; // PLUS LONG
             gameFill.style.width = swagScore + '%';
+            bgLayer.style.transform = `translateX(-${swagScore * 0.833}%)`; // BOUCLE
+            if (swagScore >= 100) startDance();
             
-            // Défilement Parallax : se décale de 0 à -75% pour s'arrêter sur l'image 4
-            bgLayer.style.transform = `translateX(-${swagScore * 0.75}%)`; 
-            
-            if (swagScore >= 100) {
-                startDance();
-            }
+            if (isJumping) player.innerHTML = jumpSprites[0];
+            else player.innerHTML = walkSprites[Math.floor(animFrame/15)%4];
+        } else {
+            player.innerHTML = danceSprites[Math.floor(animFrame/10)%5];
         }
     }
 
-    // --- PHASE 3 : DANSE DE FIN ---
     function startDance() {
-        isDancing = true;
-        
-        // On nettoie les plateformes
-        platforms.forEach(p => { if (p.el.parentNode) p.el.parentNode.removeChild(p.el); }); 
-        platforms = [];
-        
-        // Béné se met au centre et au sol
-        player.style.left = "calc(50% - 20px)";
-        playerY = 0;
-        
-        // Danse pendant 4 secondes puis réduit l'écran
+        isDancing = true; platforms.forEach(p => p.el.remove()); platforms = [];
+        player.style.left = "calc(50% - 20px)"; playerY = 0;
         setTimeout(endSequence, 4000);
     }
 
-    // --- PHASE 4 : RÉDUCTION ET LIENS FINAUX ---
     function endSequence() {
-        gameActive = false;
-        clearInterval(gameInterval);
-        clearTimeout(platformSpawner);
-        
-        gameArea.style.display = 'none';
-        gameUI.style.display = 'none';
-        hint.style.display = 'none';
-
-        // L'écran se réduit à sa taille de base
-        screen.style.height = '160px'; 
-
+        gameActive = false; clearInterval(gameInterval); clearTimeout(platformSpawner);
+        gameArea.style.display = 'none'; gameUI.style.display = 'none'; hint.style.display = 'none';
+        screen.style.height = '160px';
         setTimeout(() => {
-            lcdText.style.display = 'block';
-            lcdText.innerHTML = "PARTY LOADED !";
-            lcdText.style.color = "var(--green)";
-            lcdText.style.textShadow = "0 0 10px var(--green)";
-            
-            meme.style.display = 'block';
-            links.style.display = 'flex';
-        }, 600); // On attend la fin de la réduction
+            lcdText.style.display = 'block'; lcdText.innerHTML = "PARTY LOADED!";
+            meme.style.display = 'block'; links.style.display = 'flex';
+        }, 600);
     }
 </script>
 </body>
