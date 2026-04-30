@@ -105,10 +105,19 @@
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
 
         #player {
-            position: absolute; bottom: 0; left: 30px; width: 65px; height: 85px;
-            z-index: 20; background-size: 100% 100%; background-repeat: no-repeat;
-            background-position: center bottom; image-rendering: pixelated; 
-        }
+    position: absolute;
+    bottom: 0;
+    left: 30px;
+    width: 80px;  /* Taille augmentée pour Béné */
+    height: 110px; /* Taille augmentée pour Béné */
+    z-index: 20;
+    background-size: contain; /* Assure que le sprite ne soit pas écrasé */
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    image-rendering: pixelated;
+    /* Transition légère pour lisser la trajectoire plus longue du saut */
+    transition: bottom 0.02s linear; 
+}
         
         .swag-item {
             position: absolute; width: 40px; height: 40px;
@@ -223,7 +232,7 @@
     ];
 
     let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
-    let playerY = 0, vy = 0, gravity = 0.5, isJumping = false;
+    let playerY = 0, vy = 0, gravity = 0.35, isJumping = false;
     let activeItems = [], collectedIds = new Set();
 
     function startSequence() {
@@ -252,7 +261,7 @@
     function jump() { 
         if (!gameActive || isJumping || isDancing) return; 
         isJumping = true; 
-        vy = 9; 
+        vy = 12; 
     }
 
     function manageItems() {
@@ -321,12 +330,13 @@
             if (swagScore >= 100) startDance();
             
             // Animation perso
-            if (isJumping) {
-                player.style.backgroundImage = spriteJump[0];
-            } else {
-                let currentSprite = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : (spriteAction[0] || spriteWalk);
-                player.style.backgroundImage = currentSprite;
-            }
+           if (isJumping) {
+    player.style.backgroundImage = spriteJump[0];
+} else {
+    // Alterne entre les 4 frames de marche toutes les 10 frames de jeu
+    let walkFrame = Math.floor(animFrame / 10) % 4;
+    player.style.backgroundImage = spriteWalk[walkFrame];
+}
         } else {
             player.style.backgroundImage = spriteDance[Math.floor(animFrame/10)%3];
         }
