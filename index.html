@@ -2,229 +2,226 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAISON DE BOIS - 2008-2018 EXPERIENCE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MAISON DE BOIS - 2008-2018</title>
     <style>
-        @font-face {
-            font-family: 'Retro';
-            src: local('Impact'), local('Arial Black');
-        }
-
         :root {
             --pink: #ff00ff;
+            --cyan: #00ffff;
             --green: #00ff00;
             --purple: #8a2be2;
-            --cyan: #00ffff;
-            --yellow: #ffff00;
         }
 
-        body {
-            background-color: #000;
-            color: white;
-            font-family: 'Courier New', Courier, monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            /* Fond dégradé dynamique */
-            background: linear-gradient(45deg, #000, #1a0033, #001a1a);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: #000;
+            font-family: 'Arial Black', sans-serif; color: white;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Formes géométriques flottantes (Vecteurs) */
-        .shape {
-            position: absolute;
+        /* --- BACKGROUND GLOBAL & VECTEURS --- */
+        #bg-layer {
+            position: fixed; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a0033 0%, #000 100%);
             z-index: -1;
-            opacity: 0.6;
-            filter: blur(1px);
+        }
+
+        .shape {
+            position: absolute; opacity: 0.4; z-index: -1;
             animation: float 20s infinite alternate;
         }
 
         @keyframes float {
             from { transform: translate(0, 0) rotate(0deg); }
-            to { transform: translate(100px, 100px) rotate(360deg); }
+            to { transform: translate(50px, 50px) rotate(180deg); }
         }
 
-        /* Design du container style "Media Player" brillant */
-        #game-container {
-            text-align: center;
-            border: 4px solid #fff;
-            padding: 30px;
+        /* --- MENU D'ACCUEIL --- */
+        #menu-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; text-align: center;
+        }
+
+        .glass-card {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.3);
-            max-width: 450px;
-            width: 90%;
-            position: relative;
+            backdrop-filter: blur(10px);
             border: 2px solid var(--cyan);
+            border-radius: 20px; padding: 30px;
+            box-shadow: 0 0 30px var(--purple);
+            max-width: 85%;
         }
 
         h1 {
-            font-family: 'Retro', sans-serif;
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            background: linear-gradient(to bottom, #fff 0%, var(--pink) 50%, var(--purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(2px 2px 0px var(--cyan));
-            font-style: italic;
+            font-size: 2.2rem; margin: 0;
+            background: linear-gradient(to bottom, #fff, var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px var(--cyan));
         }
 
-        /* Ecran LCD */
-        .status-screen {
-            background: linear-gradient(180deg, #111, #222);
-            border: 3px solid var(--pink);
-            border-radius: 10px;
-            height: 140px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-            position: relative;
-            box-shadow: inset 0 0 15px #000;
+        /* --- ZONE DE JEU (Cachée au début) --- */
+        #game-screen {
+            display: none; height: 100vh; width: 100%;
+            flex-direction: column; align-items: center; justify-content: center;
         }
 
-        /* Bouton brillant Y2K */
-        .button {
-            background: linear-gradient(to bottom, var(--cyan), var(--purple));
-            color: white;
-            border: 2px solid #fff;
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 50px;
-            text-transform: uppercase;
-            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
-            transition: 0.2s;
-            font-family: 'Retro', sans-serif;
+        #game-canvas {
+            position: relative; width: 100%; height: 250px;
+            border-top: 2px solid var(--pink); border-bottom: 2px solid var(--pink);
+            background: rgba(255, 0, 255, 0.05); overflow: hidden;
         }
 
-        .button:hover {
-            transform: scale(1.05);
-            filter: brightness(1.2);
+        #player {
+            position: absolute; bottom: 0; left: 50px;
+            width: 50px; height: 70px; background: var(--pink);
+            border: 2px solid white; box-shadow: 0 0 15px var(--pink);
+            border-radius: 8px; z-index: 10;
         }
 
-        #links {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
+        .obstacle {
+            position: absolute; bottom: 0; width: 40px; height: 40px;
+            background: #222; border: 2px solid var(--green);
+        }
+
+        /* --- UI & BOUTONS --- */
+        .progress-container {
+            width: 80%; height: 20px; background: rgba(255,255,255,0.1);
+            border-radius: 50px; border: 2px solid var(--cyan); /* Barre incurvée */
+            margin: 20px 0; overflow: hidden;
+        }
+
+        #progress-fill { width: 0%; height: 100%; background: var(--green); transition: 0.2s; }
+
+        .glossy-btn {
+            background: linear-gradient(180deg, var(--cyan), var(--purple));
+            border: 2px solid white; border-radius: 50px;
+            padding: 15px 35px; color: white; font-weight: bold;
+            cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,255,255,0.3), inset 0 5px 8px rgba(255,255,255,0.5);
+            margin-top: 20px;
+        }
+
+        #end-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 100;
+            flex-direction: column; align-items: center; justify-content: center;
         }
 
         .link-btn {
-            text-decoration: none;
-            padding: 15px;
-            background: var(--green);
-            color: black;
-            font-weight: 900;
-            border-radius: 5px;
-            clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%); /* Forme géométrique */
-            transition: 0.3s;
+            width: 250px; padding: 15px; margin: 10px; text-align: center;
+            text-decoration: none; color: white; font-weight: bold;
+            border-radius: 5px; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
         }
-
-        .link-btn:hover {
-            transform: skew(-10deg);
-            background: var(--yellow);
-            box-shadow: 5px 5px 0px var(--pink);
-        }
-
-        /* GIF MEME (Optionnel : remplace les sources par des vrais gifs) */
-        .meme-gif {
-            width: 80px;
-            position: absolute;
-            display: none;
-        }
-
-        #progress-bar {
-            width: 80%;
-            height: 15px;
-            background: #444;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none;
-            border: 1px solid #fff;
-        }
-
-        #progress-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--green), var(--cyan));
-        }
-
     </style>
 </head>
 <body>
 
-<!-- Vecteurs décoratifs -->
-<svg class="shape" style="top:10%; left:5%; width:200px;" viewBox="0 0 200 200">
-    <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="2" fill="none" />
-    <path d="M10,100 Q100,10 190,100" stroke="var(--pink)" fill="none" />
-</svg>
-<svg class="shape" style="bottom:10%; right:5%; width:150px; animation-duration: 15s;" viewBox="0 0 200 200">
-    <rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" />
-</svg>
+<div id="bg-layer">
+    <svg class="shape" style="top:10%; left:5%; width:150px;" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="2" fill="none" />
+    </svg>
+    <svg class="shape" style="bottom:15%; right:10%; width:120px;" viewBox="0 0 200 200">
+        <rect x="50" y="50" width="100" height="100" stroke="var(--pink)" stroke-width="2" fill="none" transform="rotate(45 100 100)" />
+    </svg>
+</div>
 
-<div id="game-container">
-    <h1>MAISON DE BOIS</h1>
-    <div style="font-weight: bold; color: var(--yellow); font-size: 0.8rem;">BIEN PUBLIC • BORDEAUX • 07.05.26</div>
-    
-    <div class="status-screen">
-        <div id="status-text" style="color: var(--cyan); font-weight: bold;">[ SYSTEM STATUS: SWAGGY ]</div>
-        <div id="progress-bar"><div id="progress-fill"></div></div>
-        
-        <!-- Emplacement pour un GIF iconique (ex: Nyan Cat ou Dancing Baby) -->
-        <img id="meme" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif" style="width: 50px; margin-top: 10px; display:none;">
-    </div>
-
-    <button id="main-btn" class="button" onclick="startLoading()">CLICK TO UNLOCK</button>
-
-    <div id="links">
-        <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" target="_blank">🎟️ BILLETTERIE DICE</a>
-        <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink); color: white;" target="_blank">📸 INSTAGRAM POST</a>
+<!-- SECTION 1 : MENU -->
+<div id="menu-screen">
+    <div class="glass-card">
+        <h1>MAISON DE BOIS</h1>
+        <p style="color: var(--cyan); font-size: 0.8rem; letter-spacing: 2px;">2008 TO 2018</p>
+        <div style="margin: 20px 0;">
+            <img src="AFFICHE POUR LE POST INSTA.jpg" style="width: 100px; border-radius: 10px; border: 1px solid white;">
+        </div>
+        <button class="glossy-btn" onclick="launchGame()">START EXPERIENCE</button>
     </div>
 </div>
 
+<!-- SECTION 2 : JEU -->
+<div id="game-screen">
+    <div style="font-size: 0.7rem; color: var(--cyan); margin-bottom: 10px;">SWAG LOADING...</div>
+    <div class="progress-container">
+        <div id="progress-fill"></div>
+    </div>
+    <div id="game-canvas" onclick="jump()" ontouchstart="jump()">
+        <div id="player"></div>
+    </div>
+    <p style="font-size: 0.6rem; margin-top: 15px; opacity: 0.7;">TAP TO JUMP (DONT STOP THE VIBE)</p>
+</div>
+
+<!-- SECTION 3 : LIENS FINAUX -->
+<div id="end-screen">
+    <h2 style="color: var(--green); text-shadow: 0 0 10px var(--green);">VIBE ATTEINTE !</h2>
+    <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" style="background: var(--purple);">🎟️ BILLETTERIE DICE</a>
+    <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink);">📸 INSTAGRAM</a>
+    <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer; margin-top:20px; font-size:0.7rem; text-decoration:underline;">RECOMMENCER</button>
+</div>
+
 <script>
-    function startLoading() {
-        const btn = document.getElementById('main-btn');
-        const status = document.getElementById('status-text');
-        const progress = document.getElementById('progress-bar');
-        const fill = document.getElementById('progress-fill');
-        const links = document.getElementById('links');
-        const meme = document.getElementById('meme');
+    const menu = document.getElementById('menu-screen');
+    const game = document.getElementById('game-screen');
+    const end = document.getElementById('end-screen');
+    const player = document.getElementById('player');
+    const canvas = document.getElementById('game-canvas');
+    const progressFill = document.getElementById('progress-fill');
 
-        btn.style.display = 'none';
-        status.innerHTML = "INJECTING SWAG...";
-        progress.style.display = 'block';
+    let isJumping = false;
+    let score = 0;
+    let gameActive = false;
 
-        let width = 0;
-        const interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
-                status.innerHTML = "PARTY LOADED !";
-                status.style.color = "var(--green)";
-                progress.style.display = 'none';
-                meme.style.display = 'block';
-                links.style.display = 'flex';
-            } else {
-                width += Math.random() * 10;
-                if (width > 100) width = 100;
-                fill.style.width = width + '%';
+    function launchGame() {
+        menu.style.display = 'none';
+        game.style.display = 'flex';
+        gameActive = true;
+        createObstacle();
+    }
+
+    function jump() {
+        if (isJumping || !gameActive) return;
+        isJumping = true;
+        let pos = 0;
+        // Saut recalibré : moins haut (100px), plus long (vitesse douce)
+        let up = setInterval(() => {
+            if (pos >= 100) {
+                clearInterval(up);
+                let down = setInterval(() => {
+                    if (pos <= 0) {
+                        clearInterval(down);
+                        isJumping = false;
+                    }
+                    pos -= 2; player.style.bottom = pos + 'px';
+                }, 15);
             }
-        }, 120);
+            pos += 3; player.style.bottom = pos + 'px';
+        }, 15);
+    }
+
+    function createObstacle() {
+        if (!gameActive) return;
+        const obs = document.createElement('div');
+        obs.className = 'obstacle';
+        obs.style.left = '100%';
+        canvas.appendChild(obs);
+
+        let obsPos = window.innerWidth;
+        let move = setInterval(() => {
+            if (obsPos < -50) {
+                clearInterval(move);
+                if(canvas.contains(obs)) canvas.removeChild(obs);
+            }
+            obsPos -= 5;
+            obs.style.left = obsPos + 'px';
+
+            // Score Progress
+            score += 0.05;
+            progressFill.style.width = score + '%';
+            if (score >= 100) {
+                gameActive = false;
+                game.style.display = 'none';
+                end.style.display = 'flex';
+            }
+        }, 20);
+
+        setTimeout(createObstacle, Math.random() * 2000 + 1000);
     }
 </script>
-
 </body>
 </html>
