@@ -3,224 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MAISON DE BOIS - 2008-2018</title>
+    <title>MAISON DE BOIS - 2008-2018 EXPERIENCE</title>
     <style>
+        @font-face {
+            font-family: 'Retro';
+            src: local('Impact'), local('Arial Black');
+        }
+
         :root {
             --pink: #ff00ff;
-            --cyan: #00ffff;
             --green: #00ff00;
             --purple: #8a2be2;
+            --cyan: #00ffff;
+            --yellow: #ffff00;
         }
 
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background: #000;
-            font-family: 'Arial Black', sans-serif; color: white;
+        body {
+            background-color: #000; color: white;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; overflow: hidden;
+            background: linear-gradient(45deg, #000, #1a0033, #001a1a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- BACKGROUND GLOBAL & VECTEURS --- */
-        #bg-layer {
-            position: fixed; width: 100%; height: 100%;
-            background: radial-gradient(circle, #1a0033 0%, #000 100%);
-            z-index: -1;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
+        /* Scanlines TV */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        /* Formes géométriques flottantes enrichies */
         .shape {
-            position: absolute; opacity: 0.4; z-index: -1;
-            animation: float 20s infinite alternate;
+            position: absolute; z-index: -1; opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
         }
+        .shape-glitch { animation: float 15s infinite alternate-reverse, glitchPulse 3s infinite; }
 
         @keyframes float {
-            from { transform: translate(0, 0) rotate(0deg); }
-            to { transform: translate(50px, 50px) rotate(180deg); }
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            100% { transform: translate(150px, -100px) rotate(360deg) scale(1.2); }
+        }
+        @keyframes glitchPulse {
+            0%, 100% { filter: drop-shadow(0 0 5px var(--cyan)); }
+            50% { filter: drop-shadow(0 0 15px var(--pink)); }
         }
 
-        /* --- MENU D'ACCUEIL --- */
-        #menu-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; text-align: center;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--cyan);
-            border-radius: 20px; padding: 30px;
-            box-shadow: 0 0 30px var(--purple);
-            max-width: 85%;
+        /* Container Principal (Media Player) */
+        #main-container {
+            text-align: center; border: 2px solid var(--cyan); padding: 25px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border-radius: 20px; box-shadow: 0 0 40px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            max-width: 450px; width: 90%; position: relative; z-index: 10;
         }
 
         h1 {
-            font-size: 2.2rem; margin: 0;
-            background: linear-gradient(to bottom, #fff, var(--pink));
+            font-family: 'Retro', sans-serif; font-size: 2.2rem; margin-top: 0; margin-bottom: 5px;
+            background: linear-gradient(to bottom, #fff 0%, var(--pink) 50%, var(--purple) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(2px 2px var(--cyan));
+            filter: drop-shadow(2px 2px 0px var(--cyan)); font-style: italic;
         }
 
-        /* --- ZONE DE JEU (Cachée au début) --- */
-        #game-screen {
-            display: none; height: 100vh; width: 100%;
-            flex-direction: column; align-items: center; justify-content: center;
+        /* Ecran LCD Multi-fonctions - AVEC TRANSITION DE TAILLE */
+        .status-screen {
+            background: linear-gradient(180deg, #0a0a0a, #1a1a1a);
+            border: 3px solid var(--pink); border-radius: 10px; 
+            height: 160px; /* Taille de base */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            margin: 20px 0; position: relative; box-shadow: inset 0 0 20px #000;
+            overflow: hidden;
+            transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); /* Animation d'ouverture du jeu */
         }
 
-        #game-canvas {
-            position: relative; width: 100%; height: 250px;
-            border-top: 2px solid var(--pink); border-bottom: 2px solid var(--pink);
-            background: rgba(255, 0, 255, 0.05); overflow: hidden;
-        }
+        .lcd-text { color: var(--cyan); font-weight: bold; font-size: 0.9rem; text-shadow: 0 0 5px var(--cyan); margin-bottom: 15px; }
 
+        /* UI: Barre de progression incurvée */
+        .progress-bar-curved {
+            width: 80%; height: 15px; background: rgba(255,255,255,0.1);
+            border-radius: 50px; overflow: hidden; border: 1px solid var(--cyan);
+            box-shadow: 0 0 10px rgba(0,255,255,0.2); display: none;
+        }
+        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.2s; }
+
+        /* UI: Jeu Test - Redimensionné */
+        #game-area { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: rgba(0, 255, 255, 0.05); }
+        
         #player {
-            position: absolute; bottom: 0; left: 50px;
-            width: 50px; height: 70px; background: var(--pink);
-            border: 2px solid white; box-shadow: 0 0 15px var(--pink);
-            border-radius: 8px; z-index: 10;
+            position: absolute; bottom: 0; left: 30px; width: 40px; height: 50px;
+            background: var(--pink); border: 2px solid white; border-radius: 5px; box-shadow: 0 0 10px var(--pink);
+            z-index: 20;
+        }
+        
+        /* Les marches de l'escalier */
+        .platform { 
+            position: absolute; bottom: 0; 
+            background: rgba(0, 255, 255, 0.2); 
+            border-top: 3px solid var(--cyan); border-left: 1px solid rgba(0,255,255,0.5);
+            box-shadow: 0 0 15px rgba(0,255,255,0.3);
         }
 
-        .obstacle {
-            position: absolute; bottom: 0; width: 40px; height: 40px;
-            background: #222; border: 2px solid var(--green);
+        /* Ligne de sol de base */
+        .ground-line {
+            position: absolute; bottom: 0; width: 100%; height: 2px;
+            background: var(--pink); box-shadow: 0 0 10px var(--pink);
         }
 
-        /* --- UI & BOUTONS --- */
-        .progress-container {
-            width: 80%; height: 20px; background: rgba(255,255,255,0.1);
-            border-radius: 50px; border: 2px solid var(--cyan); /* Barre incurvée */
-            margin: 20px 0; overflow: hidden;
+        /* Boutons */
+        .action-btn {
+            background: linear-gradient(to bottom, var(--cyan), var(--purple));
+            color: white; border: 2px solid #fff; padding: 15px 30px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 50px;
+            text-transform: uppercase; box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+            font-family: 'Retro', sans-serif; animation: pulseBtn 2s infinite;
         }
+        @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .action-btn:active { transform: scale(0.95); animation: none; }
 
-        #progress-fill { width: 0%; height: 100%; background: var(--green); transition: 0.2s; }
-
-        .glossy-btn {
-            background: linear-gradient(180deg, var(--cyan), var(--purple));
-            border: 2px solid white; border-radius: 50px;
-            padding: 15px 35px; color: white; font-weight: bold;
-            cursor: pointer; text-transform: uppercase;
-            box-shadow: 0 5px 15px rgba(0,255,255,0.3), inset 0 5px 8px rgba(255,255,255,0.5);
-            margin-top: 20px;
-        }
-
-        #end-screen {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 100;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
-
+        /* Liens de fin */
+        #links-container { display: none; flex-direction: column; gap: 15px; width: 100%; margin-top: 10px; }
         .link-btn {
-            width: 250px; padding: 15px; margin: 10px; text-align: center;
-            text-decoration: none; color: white; font-weight: bold;
-            border-radius: 5px; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            text-decoration: none; padding: 15px; background: var(--green); color: black;
+            font-weight: 900; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
+            transition: 0.2s; font-family: 'Retro', sans-serif; font-size: 1.1rem; text-transform: uppercase;
         }
+        .link-btn:hover { transform: skew(-5deg) scale(1.02); background: var(--yellow); box-shadow: 5px 5px 0px var(--pink); }
+
+        .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; }
+        
+        .hint-text { font-size: 0.7rem; color: var(--yellow); margin-top: 10px; display: none; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
     </style>
 </head>
 <body>
 
-<div id="bg-layer">
-    <svg class="shape" style="top:10%; left:5%; width:150px;" viewBox="0 0 200 200">
-        <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="2" fill="none" />
-    </svg>
-    <svg class="shape" style="bottom:15%; right:10%; width:120px;" viewBox="0 0 200 200">
-        <rect x="50" y="50" width="100" height="100" stroke="var(--pink)" stroke-width="2" fill="none" transform="rotate(45 100 100)" />
-    </svg>
-</div>
+<div class="scanlines"></div>
 
-<!-- SECTION 1 : MENU -->
-<div id="menu-screen">
-    <div class="glass-card">
-        <h1>MAISON DE BOIS</h1>
-        <p style="color: var(--cyan); font-size: 0.8rem; letter-spacing: 2px;">2008 TO 2018</p>
-        <div style="margin: 20px 0;">
-            <img src="AFFICHE POUR LE POST INSTA.jpg" style="width: 100px; border-radius: 10px; border: 1px solid white;">
+<!-- Vecteurs décoratifs Background -->
+<svg class="shape" style="top:5%; left:5%; width:150px;" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="10 5"/>
+</svg>
+<svg class="shape shape-glitch" style="bottom:10%; right:5%; width:180px;" viewBox="0 0 200 200">
+    <rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" />
+</svg>
+<svg class="shape" style="top:40%; right:15%; width:80px;" viewBox="0 0 100 100">
+    <polygon points="50,10 90,90 10,90" stroke="var(--pink)" stroke-width="2" fill="none"/>
+</svg>
+<svg class="shape shape-glitch" style="bottom:20%; left:10%; width:100px;" viewBox="0 0 100 100">
+    <line x1="20" y1="20" x2="80" y2="80" stroke="var(--yellow)" stroke-width="3" />
+    <line x1="80" y1="20" x2="20" y2="80" stroke="var(--yellow)" stroke-width="3" />
+</svg>
+
+<div id="main-container">
+    <h1>MAISON DE BOIS</h1>
+    <div style="font-weight: bold; color: var(--yellow); font-size: 0.75rem; letter-spacing: 2px;">BIEN PUBLIC • BORDEAUX • 07.05</div>
+    
+    <div class="status-screen" id="screen" onclick="jump()" ontouchstart="jump()">
+        <!-- Phase 1 : Attente / Chargement -->
+        <div id="lcd-text" class="lcd-text">[ SYSTEM STATUS: IDLE ]</div>
+        
+        <div id="loading-bar" class="progress-bar-curved"><div id="loading-fill" class="progress-fill"></div></div>
+        
+        <!-- Phase 2 : Jeu -->
+        <div id="game-ui" style="display:none; width: 100%; position: absolute; top: 10px; text-align: center; z-index: 30;">
+            <div style="font-size: 0.6rem; color: var(--cyan); margin-bottom: 5px;">SWAG LEVEL</div>
+            <div class="progress-bar-curved" style="display: inline-block; width: 70%; height: 10px; border-radius: 50px;"><div id="game-fill" class="progress-fill"></div></div>
         </div>
-        <button class="glossy-btn" onclick="launchGame()">START EXPERIENCE</button>
-    </div>
-</div>
+        <div id="game-area">
+            <div class="ground-line"></div>
+            <div id="player"></div>
+        </div>
 
-<!-- SECTION 2 : JEU -->
-<div id="game-screen">
-    <div style="font-size: 0.7rem; color: var(--cyan); margin-bottom: 10px;">SWAG LOADING...</div>
-    <div class="progress-container">
-        <div id="progress-fill"></div>
+        <!-- GIF de Fin -->
+        <img id="meme" class="meme-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif">
     </div>
-    <div id="game-canvas" onclick="jump()" ontouchstart="jump()">
-        <div id="player"></div>
-    </div>
-    <p style="font-size: 0.6rem; margin-top: 15px; opacity: 0.7;">TAP TO JUMP (DONT STOP THE VIBE)</p>
-</div>
 
-<!-- SECTION 3 : LIENS FINAUX -->
-<div id="end-screen">
-    <h2 style="color: var(--green); text-shadow: 0 0 10px var(--green);">VIBE ATTEINTE !</h2>
-    <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" style="background: var(--purple);">🎟️ BILLETTERIE DICE</a>
-    <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink);">📸 INSTAGRAM</a>
-    <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer; margin-top:20px; font-size:0.7rem; text-decoration:underline;">RECOMMENCER</button>
+    <div id="hint" class="hint-text">TAP TO CLIMB THE VIBE!</div>
+
+    <button id="main-btn" class="action-btn" onclick="startSequence()">BOOT SYSTEM</button>
+
+    <div id="links-container">
+        <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" target="_blank">🎟️ BILLETTERIE DICE</a>
+        <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink); color: white;" target="_blank">📸 INSTAGRAM POST</a>
+    </div>
 </div>
 
 <script>
-    const menu = document.getElementById('menu-screen');
-    const game = document.getElementById('game-screen');
-    const end = document.getElementById('end-screen');
+    const screen = document.getElementById('screen');
+    const btn = document.getElementById('main-btn');
+    const lcdText = document.getElementById('lcd-text');
+    const loadBar = document.getElementById('loading-bar');
+    const loadFill = document.getElementById('loading-fill');
+    
+    const gameArea = document.getElementById('game-area');
+    const gameUI = document.getElementById('game-ui');
+    const gameFill = document.getElementById('game-fill');
     const player = document.getElementById('player');
-    const canvas = document.getElementById('game-canvas');
-    const progressFill = document.getElementById('progress-fill');
+    const hint = document.getElementById('hint');
 
-    let isJumping = false;
-    let score = 0;
+    const links = document.getElementById('links-container');
+    const meme = document.getElementById('meme');
+
+    const loadMessages = ["INJECTING SWAG...", "CALIBRATING BÉNÉ...", "BUILDING STAIRS...", "UNLOCKING 2008 VIBES..."];
+
+    // Variables du Jeu
     let gameActive = false;
+    let swagScore = 0;
+    let gameInterval;
+    let platformSpawner;
 
-    function launchGame() {
-        menu.style.display = 'none';
-        game.style.display = 'flex';
+    // Variables Physiques (Béné)
+    let playerY = 0;
+    let vy = 0;
+    let gravity = 0.8;
+    let isJumping = false;
+    let platforms = [];
+    let stairLevel = 0;
+
+    // --- PHASE 1 : BOOT ---
+    function startSequence() {
+        btn.style.display = 'none';
+        loadBar.style.display = 'block';
+        
+        let width = 0; let msgIndex = 0;
+        const textInterval = setInterval(() => {
+            msgIndex = (msgIndex + 1) % loadMessages.length;
+            lcdText.innerHTML = loadMessages[msgIndex];
+        }, 800);
+
+        const loadInterval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(loadInterval);
+                clearInterval(textInterval);
+                prepareGame();
+            } else {
+                width += Math.random() * 8;
+                if (width > 100) width = 100;
+                loadFill.style.width = width + '%';
+            }
+        }, 150);
+    }
+
+    // --- TRANSITION : AGRANDISSEMENT DE L'ÉCRAN ---
+    function prepareGame() {
+        lcdText.style.display = 'none';
+        loadBar.style.display = 'none';
+        
+        // On agrandit la fenêtre (le reste du menu ne bouge pas)
+        screen.style.height = '280px'; 
+        
+        // On attend la fin de l'animation CSS (0.6s) avant de lancer l'action
+        setTimeout(startGame, 600);
+    }
+
+    // --- PHASE 2 : JEU (ESCALIERS) ---
+    function startGame() {
+        gameArea.style.display = 'block';
+        gameUI.style.display = 'block';
+        hint.style.display = 'block';
         gameActive = true;
-        createObstacle();
+        
+        // Lancement du moteur physique (60 FPS)
+        gameInterval = setInterval(gameLoop, 16);
+        spawnPlatform();
     }
 
     function jump() {
-        if (isJumping || !gameActive) return;
+        if (!gameActive || isJumping) return;
         isJumping = true;
-        let pos = 0;
-        // Saut recalibré : moins haut (100px), plus long (vitesse douce)
-        let up = setInterval(() => {
-            if (pos >= 100) {
-                clearInterval(up);
-                let down = setInterval(() => {
-                    if (pos <= 0) {
-                        clearInterval(down);
-                        isJumping = false;
-                    }
-                    pos -= 2; player.style.bottom = pos + 'px';
-                }, 15);
-            }
-            pos += 3; player.style.bottom = pos + 'px';
-        }, 15);
+        vy = 12; // Impulsion du saut (long mais pas trop haut)
     }
 
-    function createObstacle() {
+    function spawnPlatform() {
         if (!gameActive) return;
-        const obs = document.createElement('div');
-        obs.className = 'obstacle';
-        obs.style.left = '100%';
-        canvas.appendChild(obs);
+        
+        // Logique de l'escalier (0, 30px, 60px, 90px de haut)
+        stairLevel++;
+        if (stairLevel > 3) stairLevel = 0; // Redescend à 0
+        
+        let h = stairLevel * 35; 
+        let w = 100; // Largeur de la marche
+        
+        if (h > 0) {
+            let p = document.createElement('div');
+            p.className = 'platform';
+            p.style.height = h + 'px';
+            p.style.width = w + 'px';
+            p.style.left = '100%';
+            gameArea.appendChild(p);
+            
+            platforms.push({el: p, x: screen.offsetWidth, w: w, h: h});
+        }
+        
+        // Vitesse de génération des marches
+        platformSpawner = setTimeout(spawnPlatform, 900);
+    }
 
-        let obsPos = window.innerWidth;
-        let move = setInterval(() => {
-            if (obsPos < -50) {
-                clearInterval(move);
-                if(canvas.contains(obs)) canvas.removeChild(obs);
+    function gameLoop() {
+        let groundH = 0;
+
+        // Déplacement et gestion des escaliers
+        for (let i = platforms.length - 1; i >= 0; i--) {
+            let p = platforms[i];
+            p.x -= 3.5; // Vitesse de défilement
+            p.el.style.left = p.x + 'px';
+
+            // Collision X (Le joueur est entre 30px et 70px)
+            if (p.x < 70 && p.x + p.w > 30) {
+                groundH = Math.max(groundH, p.h);
             }
-            obsPos -= 5;
-            obs.style.left = obsPos + 'px';
 
-            // Score Progress
-            score += 0.05;
-            progressFill.style.width = score + '%';
-            if (score >= 100) {
-                gameActive = false;
-                game.style.display = 'none';
-                end.style.display = 'flex';
+            // Nettoyage
+            if (p.x < -100) {
+                if (gameArea.contains(p.el)) gameArea.removeChild(p.el);
+                platforms.splice(i, 1);
             }
-        }, 20);
+        }
 
-        setTimeout(createObstacle, Math.random() * 2000 + 1000);
+        // Physique de Béné (Gravité)
+        vy -= gravity;
+        playerY += vy;
+
+        // Gestion du sol et des marches
+        if (playerY <= groundH) {
+            playerY = groundH;
+            vy = 0;
+            isJumping = false;
+        } else if (!isJumping && playerY > groundH) {
+             isJumping = true; // Tombe d'une marche
+        }
+
+        // Auto-grimpette (si Béné fonce dans une marche sans sauter)
+        if (playerY < groundH) {
+            playerY = groundH;
+            vy = 0;
+            isJumping = false;
+        }
+
+        player.style.bottom = playerY + 'px';
+
+        // Progression de la jauge SWAG
+        swagScore += 0.12;
+        gameFill.style.width = swagScore + '%';
+        
+        if (swagScore >= 100) {
+            endSequence();
+        }
+    }
+
+    // --- PHASE 3 : RÉDUCTION ET LIENS FINAUX ---
+    function endSequence() {
+        gameActive = false;
+        clearInterval(gameInterval);
+        clearTimeout(platformSpawner);
+        
+        // On nettoie le jeu
+        gameArea.innerHTML = '<div class="ground-line"></div><div id="player"></div>';
+        gameArea.style.display = 'none';
+        gameUI.style.display = 'none';
+        hint.style.display = 'none';
+
+        // L'écran se réduit à sa taille de base
+        screen.style.height = '160px'; 
+
+        setTimeout(() => {
+            lcdText.style.display = 'block';
+            lcdText.innerHTML = "PARTY LOADED !";
+            lcdText.style.color = "var(--green)";
+            lcdText.style.textShadow = "0 0 10px var(--green)";
+            
+            meme.style.display = 'block';
+            links.style.display = 'flex';
+        }, 600); // On attend la fin de la réduction
     }
 </script>
 </body>
