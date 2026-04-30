@@ -93,10 +93,9 @@
 
         #game-area { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: rgba(0, 255, 255, 0.05); }
         
-        /* Modifié pour 6 tranches (boucle) */
         #background-layer { 
             position: absolute; top: 0; left: 0; height: 100%; width: 600%; 
-            display: flex;监测 will-change: transform; pointer-events: none; z-index: 1;
+            display: flex; will-change: transform; pointer-events: none; z-index: 1;
         }
         .bg-slice { width: 16.66%; height: 100%; background-size: cover; background-position: center bottom; }
 
@@ -106,10 +105,10 @@
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.png?raw=true'); }
 
         #player {
-            position: absolute; bottom: 0; left: 30px; width: 40px; height: 50px;
-            z-index: 20; display: flex; justify-content: center; align-items: center;
-            font-size: 2.2rem; transition: left 1s ease-in-out;
+            position: absolute; bottom: 0; left: 30px; width: 65px; height: 85px;
+            z-index: 20; transition: left 1s ease-in-out;
             background: transparent; border: none;
+            background-size: contain; background-repeat: no-repeat; background-position: center bottom;
         }
         
         .platform { 
@@ -176,7 +175,7 @@
                 <div class="bg-slice img-4"></div>
             </div>
             <div class="ground-line"></div>
-            <div id="player">🕺</div>
+            <div id="player"></div>
         </div>
         <img id="meme" class="meme-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif">
     </div>
@@ -205,10 +204,11 @@
     const links = document.getElementById('links-container');
     const meme = document.getElementById('meme');
 
-    const walkSprites = ["🚶", "🏃", "🚶", "👟"];
-    const jumpSprites = ["🆙", "🚀"];
-    const danceSprites = ["🕺", "✨", "🕴️", "🔥", "🙌"];
-    const colors = ["var(--cyan)", "var(--pink)", "var(--green)", "var(--yellow)", "var(--purple)"];
+    // Chemins vers tes nouveaux Sprites
+    const spriteWalk = "url('Marche 1(4).png')";
+    const spriteJump = ["url('Saut 1 (2).png')", "url('Saut 2 (2).png')"];
+    const spriteDance = ["url('Dance 1 (3).png')", "url('Danse 2(3).png')", "url('Danse 3 (3).png')"];
+    const spriteAction = ["url('Action 1 (4).png')", "url('Action 2 (4).png')", "url('Action 3 (4).png')", "url('Action 4(4).png')"];
 
     let gameActive = false, swagScore = 0, gameInterval, platformSpawner, animFrame = 0, isDancing = false;
     let playerY = 0, vy = 0, gravity = 0.5, isJumping = false, platforms = [], stairLevel = 0;
@@ -221,7 +221,7 @@
             if (width >= 100) {
                 clearInterval(loadInterval);
                 lcdText.style.display = 'none'; loadBar.style.display = 'none';
-                screen.style.height = '320px'; // AGARNDI POUR PC
+                screen.style.height = '320px';
                 setTimeout(startGame, 600);
             } else {
                 width += 5; loadFill.style.width = width + '%';
@@ -235,7 +235,11 @@
         gameActive = true; gameInterval = setInterval(gameLoop, 16); spawnPlatform();
     }
 
-    function jump() { if (!gameActive || isJumping || isDancing) return; isJumping = true; vy = 10; }
+    function jump() { 
+        if (!gameActive || isJumping || isDancing) return; 
+        isJumping = true; 
+        vy = 9; // Saut un peu moins haut pour être plus long
+    }
 
     function spawnPlatform() {
         if (!gameActive || isDancing) return;
@@ -255,32 +259,39 @@
         let groundH = 0;
         for (let i = platforms.length - 1; i >= 0; i--) {
             let p = platforms[i];
-            p.x -= 2.5; // RALENTI
+            p.x -= 2.5;
             p.el.style.left = p.x + 'px';
             if (p.x < 70 && p.x + p.w > 30) groundH = Math.max(groundH, p.h);
             if (p.x < -100) { p.el.remove(); platforms.splice(i, 1); }
         }
+        
         vy -= gravity; playerY += vy;
         if (playerY <= groundH) { playerY = groundH; vy = 0; isJumping = false; }
         player.style.bottom = playerY + 'px';
         animFrame++;
 
         if (!isDancing) {
-            swagScore += 0.08; // PLUS LONG
+            swagScore += 0.08;
             gameFill.style.width = swagScore + '%';
-            bgLayer.style.transform = `translateX(-${swagScore * 0.833}%)`; // BOUCLE
+            bgLayer.style.transform = `translateX(-${swagScore * 0.833}%)`;
             if (swagScore >= 100) startDance();
             
-            if (isJumping) player.innerHTML = jumpSprites[0];
-            else player.innerHTML = walkSprites[Math.floor(animFrame/15)%4];
+            // Animation pendant le jeu
+            if (isJumping) {
+                player.style.backgroundImage = spriteJump[0];
+            } else {
+                // Alterne entre l'image de marche et une image d'action pour le mouvement
+                player.style.backgroundImage = (Math.floor(animFrame/12)%2 == 0) ? spriteWalk : spriteAction[0];
+            }
         } else {
-            player.innerHTML = danceSprites[Math.floor(animFrame/10)%5];
+            // Animation de danse finale
+            player.style.backgroundImage = spriteDance[Math.floor(animFrame/10)%3];
         }
     }
 
     function startDance() {
         isDancing = true; platforms.forEach(p => p.el.remove()); platforms = [];
-        player.style.left = "calc(50% - 20px)"; playerY = 0;
+        player.style.left = "calc(50% - 32px)"; playerY = 0;
         setTimeout(endSequence, 4000);
     }
 
