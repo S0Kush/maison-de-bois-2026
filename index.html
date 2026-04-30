@@ -18,10 +18,22 @@
 }
 .trash-item {
     position: absolute;
-    width: 60px; height: 80px; /* Taille adaptée aux sprites */
+    width: 100px; /* Plus gros */
+    height: 120px; 
     background-size: contain;
     background-repeat: no-repeat;
-    z-index: 18;
+    background-position: bottom center;
+    z-index: 20;
+    /* Ombre noire pour le détacher du fond sans faire "bonus" */
+    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.7)); 
+    /* Animation de marche légère pour le flic si tu veux */
+    transition: transform 0.1s;
+}
+
+/* Style spécifique pour la Puff qui est souvent plus petite en réalité */
+.trash-item[style*="Puff"] {
+    width: 60px;
+    height: 80px;
 }
 
 .trash-popup {
@@ -264,12 +276,6 @@
 
 <script>
 
-const swagPhrases = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
-    const trashObjectsConfig = [
-    { id: 'police1', x: 1200, y: 0, type: 'police', imgs: ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%201%20(2).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%202%20(2).png?raw=true')"] },
-    { id: 'poubelle', x: 2800, y: 0, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Poubelle.png?raw=true')" },
-    { id: 'puff', x: 4000, y: 80, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Puff%20JNR.png?raw=true')" }
-];
 
 const trashPhrases = ["C'EST NUL !", "PAS SWAG...", "LA HONTE !", "ZÉRO STYLE", "CHEUM", "AÏE AÏE AÏE"];
     const screen = document.getElementById('screen');
@@ -306,6 +312,14 @@ const trashPhrases = ["C'EST NUL !", "PAS SWAG...", "LA HONTE !", "ZÉRO STYLE",
         { id: 'obj5', x: 4800, y: 40, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/HANDSPINNER.png?raw=true')" }
     ];
 
+    const swagPhrases = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
+    const trashObjectsConfig = [
+    { id: 'police1', x: 1200, y: 0, type: 'police', imgs: ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%201%20(2).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%202%20(2).png?raw=true')"] },
+    { id: 'poubelle', x: 2800, y: 0, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Poubelle.png?raw=true')" },
+    { id: 'puff', x: 4000, y: 80, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Puff%20JNR.png?raw=true')" }
+];
+
+const allObjectsConfig = [...swagObjectsConfig, ...trashObjectsConfig];
     let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
     let playerY = 0, vy = 0, gravity = 0.35, isJumping = false;
     let activeItems = [], collectedIds = new Set();
@@ -344,49 +358,68 @@ const frameMs = 1000 / fpsTarget;
         vy = 9; 
     }
 
-    function manageItems() {
-        const bgOffset = swagScore * 30; // Vitesse du fond
+function manageItems() {
+    const bgOffset = swagScore * 30;
 
-        swagObjectsConfig.forEach(obj => {
-            const currentX = obj.x - bgOffset;
-            
-            // Si l'objet entre dans l'écran et n'a pas été ramassé
-            if (currentX < screen.offsetWidth + 50 && currentX > -50 && !collectedIds.has(obj.id)) {
-                let item = activeItems.find(i => i.id === obj.id);
-                if (!item) {
-                    const el = document.createElement('div');
-                    el.className = 'swag-item';
-                    el.style.backgroundImage = obj.img;
-                    gameArea.appendChild(el);
-                    item = { el, id: obj.id, x: obj.x, y: obj.y };
-                    activeItems.push(item);
-                }
-                // Dans ta boucle de gestion d'objets, pour le policier :
-if (obj.type === 'police') {
-    // Alterne entre l'image 1 et 2 toutes les 15 frames
-    let policeFrame = Math.floor(animFrame / 15) % 2;
-    item.el.style.backgroundImage = obj.imgs[policeFrame];
-}
-                
-                // Positionnement et animation sautillante
-                const bounce = Math.sin(animFrame * 0.1) * 10;
-                item.el.style.left = currentX + 'px';
-                item.el.style.bottom = (obj.y + bounce) + 'px';
-
-                // Collision avec le perso (zone de contact env 50px)
-                if (currentX < 80 && currentX > 10 && Math.abs(playerY - obj.y) < 60) {
-                    collectItem(item);
-                }
-            } else {
-                // Supprimer si hors écran
-                const index = activeItems.findIndex(i => i.id === obj.id);
-                if (index > -1) {
-                    activeItems[index].el.remove();
-                    activeItems.splice(index, 1);
-                }
+    allObjectsConfig.forEach(obj => {
+        const currentX = obj.x - bgOffset;
+        
+        // --- DISPARITION DIRECTE APRÈS LA BORDURE ---
+        // On vérifie si l'objet a dépassé le bord gauche (0)
+        if (currentX < -100) { // On garde une petite marge de -100 pour que l'image sorte entièrement
+            let itemIndex = activeItems.findIndex(i => i.id === obj.id);
+            if (itemIndex !== -1) {
+                activeItems[itemIndex].el.remove(); 
+                activeItems.splice(itemIndex, 1);   
+                collectedIds.add(obj.id); 
             }
-        });
-    }
+            return; // ON S'ARRÊTE LÀ pour cet objet, on ne passe pas à la suite
+        }
+
+        // --- AFFICHAGE ET LOGIQUE SI VISIBLE ---
+        if (currentX < screen.offsetWidth + 50 && currentX >= -100 && !collectedIds.has(obj.id)) {
+            let item = activeItems.find(i => i.id === obj.id);
+            const isTrash = (obj.type === 'police' || obj.id === 'poubelle' || obj.id === 'puff');
+
+            if (!item) {
+                const el = document.createElement('div');
+                el.className = isTrash ? 'trash-item' : 'swag-item';
+                
+                if (isTrash) {
+                    el.style.width = "100px";
+                    el.style.height = "120px";
+                    el.style.filter = "drop-shadow(0 0 5px red)";
+                    el.style.zIndex = "25";
+                }
+
+                if (obj.img) el.style.backgroundImage = obj.img;
+                gameArea.appendChild(el);
+                item = { el, id: obj.id, x: obj.x, y: obj.y, type: obj.type };
+                activeItems.push(item);
+            }
+            
+            // Animation et Position
+            if (obj.type === 'police' && obj.imgs) {
+                let frameIndex = Math.floor(animFrame / 15) % 2;
+                item.el.style.backgroundImage = obj.imgs[frameIndex];
+            }
+
+            let finalY = (obj.type === 'police' || obj.id === 'poubelle') ? 0 : obj.y;
+            const isFlying = (!obj.type || (obj.type === 'static' && obj.id !== 'poubelle'));
+            const bounce = isFlying ? Math.sin(animFrame * 0.1) * 10 : 0;
+            
+            item.el.style.left = currentX + 'px';
+            item.el.style.bottom = (finalY + bounce) + 'px';
+
+            // Collisions
+            const hitHeight = isTrash ? 50 : 60;
+            if (currentX < 60 && currentX > 20 && Math.abs(playerY - finalY) < hitHeight) {
+                if (isTrash) collectTrash(item);
+                else collectItem(item);
+            }
+        }
+    });
+}
 
     function collectItem(item) {
     collectedIds.add(item.id);
