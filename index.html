@@ -364,19 +364,17 @@ function manageItems() {
     allObjectsConfig.forEach(obj => {
         const currentX = obj.x - bgOffset;
         
-        // --- DISPARITION DIRECTE APRÈS LA BORDURE ---
-        // On vérifie si l'objet a dépassé le bord gauche (0)
-        if (currentX < -100) { // On garde une petite marge de -100 pour que l'image sorte entièrement
+        // --- 1. DISPARITION NETTE À GAUCHE ---
+        if (currentX < -100) {
             let itemIndex = activeItems.findIndex(i => i.id === obj.id);
             if (itemIndex !== -1) {
                 activeItems[itemIndex].el.remove(); 
                 activeItems.splice(itemIndex, 1);   
                 collectedIds.add(obj.id); 
             }
-            return; // ON S'ARRÊTE LÀ pour cet objet, on ne passe pas à la suite
+            return; 
         }
 
-        // --- AFFICHAGE ET LOGIQUE SI VISIBLE ---
         if (currentX < screen.offsetWidth + 50 && currentX >= -100 && !collectedIds.has(obj.id)) {
             let item = activeItems.find(i => i.id === obj.id);
             const isTrash = (obj.type === 'police' || obj.id === 'poubelle' || obj.id === 'puff');
@@ -398,7 +396,6 @@ function manageItems() {
                 activeItems.push(item);
             }
             
-            // Animation et Position
             if (obj.type === 'police' && obj.imgs) {
                 let frameIndex = Math.floor(animFrame / 15) % 2;
                 item.el.style.backgroundImage = obj.imgs[frameIndex];
@@ -411,12 +408,20 @@ function manageItems() {
             item.el.style.left = currentX + 'px';
             item.el.style.bottom = (finalY + bounce) + 'px';
 
-            // Collisions
-            const hitHeight = isTrash ? 50 : 60;
-            if (currentX < 60 && currentX > 20 && Math.abs(playerY - finalY) < hitHeight) {
-                if (isTrash) collectTrash(item);
-                else collectItem(item);
+            // --- 2. REMPLACE CETTE ZONE (LA COLLISION) ---
+            const playerCenterX = 40; // Centre horizontal de Béné
+            const hitWidth = 20;      // Marge de tolérance (très fine)
+            const hitHeight = 45;     // Marge de tolérance verticale
+
+            // On vérifie si le centre de Béné est sur l'objet
+            if (Math.abs(currentX - playerCenterX) < hitWidth) {
+                // Si Béné est au sol ou trop bas par rapport à l'objet
+                if (playerY < finalY + hitHeight) {
+                    if (isTrash) collectTrash(item);
+                    else collectItem(item);
+                }
             }
+            // ----------------------------------------------
         }
     });
 }
