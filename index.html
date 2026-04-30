@@ -99,10 +99,30 @@
         /* UI: Jeu Test - Redimensionné */
         #game-area { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: rgba(0, 255, 255, 0.05); }
         
+        /* -------------------------------------
+           INTÉGRATION DU PARALLAX BACKGROUND
+        -------------------------------------- */
+        #background-layer { 
+            position: absolute; top: 0; left: 0; height: 100%; width: 400%; /* 4 images = 400% */
+            display: flex; will-change: transform; pointer-events: none; z-index: 1;
+        }
+        .bg-slice { 
+            width: 25%; height: 100%; 
+            background-size: cover; background-position: center bottom;
+        }
+        /* /!\ REMPLACE CES LIENS PAR TES LIENS GITHUB "RAW" /!\ */
+        .img-1 { background-image: url('https://raw.githubusercontent.com/ton-pseudo/ton-repo/main/image4.jpg'); } /* Librairie/Cafe */
+        .img-2 { background-image: url('https://raw.githubusercontent.com/ton-pseudo/ton-repo/main/image3.jpg'); } /* Atelier */
+        .img-3 { background-image: url('https://raw.githubusercontent.com/ton-pseudo/ton-repo/main/image2.jpg'); } /* Studio 24 */
+        .img-4 { background-image: url('https://raw.githubusercontent.com/ton-pseudo/ton-repo/main/image1.jpg'); } /* BIEN PUBLIC (Final) */
+
+        /* BÉNÉ SPRITE CUSTOM */
         #player {
             position: absolute; bottom: 0; left: 30px; width: 40px; height: 50px;
-            background: var(--pink); border: 2px solid white; border-radius: 5px; box-shadow: 0 0 10px var(--pink);
-            z-index: 20;
+            z-index: 20; display: flex; justify-content: center; align-items: center;
+            font-size: 2.2rem; transition: left 1s ease-in-out;
+            /* On enlève le carré rose de base pour laisser place au sprite */
+            background: transparent; border: none; box-shadow: none;
         }
         
         /* Les marches de l'escalier */
@@ -110,13 +130,13 @@
             position: absolute; bottom: 0; 
             background: rgba(0, 255, 255, 0.2); 
             border-top: 3px solid var(--cyan); border-left: 1px solid rgba(0,255,255,0.5);
-            box-shadow: 0 0 15px rgba(0,255,255,0.3);
+            box-shadow: 0 0 15px rgba(0,255,255,0.3); z-index: 15;
         }
 
         /* Ligne de sol de base */
         .ground-line {
             position: absolute; bottom: 0; width: 100%; height: 2px;
-            background: var(--pink); box-shadow: 0 0 10px var(--pink);
+            background: var(--pink); box-shadow: 0 0 10px var(--pink); z-index: 10;
         }
 
         /* Boutons */
@@ -139,7 +159,7 @@
         }
         .link-btn:hover { transform: skew(-5deg) scale(1.02); background: var(--yellow); box-shadow: 5px 5px 0px var(--pink); }
 
-        .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; }
+        .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; z-index: 40; }
         
         .hint-text { font-size: 0.7rem; color: var(--yellow); margin-top: 10px; display: none; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -181,8 +201,15 @@
             <div class="progress-bar-curved" style="display: inline-block; width: 70%; height: 10px; border-radius: 50px;"><div id="game-fill" class="progress-fill"></div></div>
         </div>
         <div id="game-area">
+            <!-- Arrière-plan défilant -->
+            <div id="background-layer">
+                <div class="bg-slice img-1"></div>
+                <div class="bg-slice img-2"></div>
+                <div class="bg-slice img-3"></div>
+                <div class="bg-slice img-4"></div>
+            </div>
             <div class="ground-line"></div>
-            <div id="player"></div>
+            <div id="player">🕺</div>
         </div>
 
         <!-- GIF de Fin -->
@@ -207,6 +234,7 @@
     const loadFill = document.getElementById('loading-fill');
     
     const gameArea = document.getElementById('game-area');
+    const bgLayer = document.getElementById('background-layer');
     const gameUI = document.getElementById('game-ui');
     const gameFill = document.getElementById('game-fill');
     const player = document.getElementById('player');
@@ -217,16 +245,24 @@
 
     const loadMessages = ["INJECTING SWAG...", "CALIBRATING BÉNÉ...", "BUILDING STAIRS...", "UNLOCKING 2008 VIBES..."];
 
+    // SPRITES ET COULEURS (Béné)
+    const walkSprites = ["🚶", "🏃", "🚶", "👟"];
+    const jumpSprites = ["🆙", "🚀"];
+    const danceSprites = ["🕺", "✨", "🕴️", "🔥", "🙌", "💫", "👑"];
+    const colors = ["var(--cyan)", "var(--pink)", "var(--green)", "var(--yellow)", "var(--purple)"];
+
     // Variables du Jeu
     let gameActive = false;
     let swagScore = 0;
     let gameInterval;
     let platformSpawner;
+    let animFrame = 0;
+    let isDancing = false;
 
-    // Variables Physiques (Béné)
+    // Variables Physiques (Béné recalibré)
     let playerY = 0;
     let vy = 0;
-    let gravity = 0.8;
+    let gravity = 0.75; // Gravité réduite pour planer un peu plus
     let isJumping = false;
     let platforms = [];
     let stairLevel = 0;
@@ -267,7 +303,7 @@
         setTimeout(startGame, 600);
     }
 
-    // --- PHASE 2 : JEU (ESCALIERS) ---
+    // --- PHASE 2 : JEU (ESCALIERS & PARALLAX) ---
     function startGame() {
         gameArea.style.display = 'block';
         gameUI.style.display = 'block';
@@ -280,13 +316,13 @@
     }
 
     function jump() {
-        if (!gameActive || isJumping) return;
+        if (!gameActive || isJumping || isDancing) return;
         isJumping = true;
-        vy = 12; // Impulsion du saut (long mais pas trop haut)
+        vy = 11.5; // Impulsion recalibrée (moins haute mais trajectoire adoucie par la gravité)
     }
 
     function spawnPlatform() {
-        if (!gameActive) return;
+        if (!gameActive || isDancing) return;
         
         // Logique de l'escalier (0, 30px, 60px, 90px de haut)
         stairLevel++;
@@ -311,12 +347,13 @@
     }
 
     function gameLoop() {
+        if (!gameActive) return;
         let groundH = 0;
 
         // Déplacement et gestion des escaliers
         for (let i = platforms.length - 1; i >= 0; i--) {
             let p = platforms[i];
-            p.x -= 3.5; // Vitesse de défilement
+            p.x -= 3.5; // Vitesse de défilement (Ton réglage d'origine)
             p.el.style.left = p.x + 'px';
 
             // Collision X (Le joueur est entre 30px et 70px)
@@ -353,23 +390,59 @@
 
         player.style.bottom = playerY + 'px';
 
-        // Progression de la jauge SWAG
-        swagScore += 0.12;
-        gameFill.style.width = swagScore + '%';
-        
-        if (swagScore >= 100) {
-            endSequence();
+        // ------------------------------------
+        // ANIMATION SPRITES & FOND
+        // ------------------------------------
+        animFrame++;
+        if (isDancing) {
+            let dIdx = Math.floor(animFrame / 10) % danceSprites.length; 
+            player.innerHTML = danceSprites[dIdx];
+            player.style.color = colors[dIdx % colors.length];
+        } else if (isJumping) {
+            player.innerHTML = jumpSprites[vy > 0 ? 0 : 1];
+            player.style.color = "var(--cyan)";
+        } else {
+            let wIdx = Math.floor(animFrame / 15) % walkSprites.length; 
+            player.innerHTML = walkSprites[wIdx];
+            player.style.color = "white";
+        }
+
+        if (!isDancing) {
+            // Progression de la jauge SWAG
+            swagScore += 0.12;
+            gameFill.style.width = swagScore + '%';
+            
+            // Défilement Parallax : se décale de 0 à -75% pour s'arrêter sur l'image 4
+            bgLayer.style.transform = `translateX(-${swagScore * 0.75}%)`; 
+            
+            if (swagScore >= 100) {
+                startDance();
+            }
         }
     }
 
-    // --- PHASE 3 : RÉDUCTION ET LIENS FINAUX ---
+    // --- PHASE 3 : DANSE DE FIN ---
+    function startDance() {
+        isDancing = true;
+        
+        // On nettoie les plateformes
+        platforms.forEach(p => { if (p.el.parentNode) p.el.parentNode.removeChild(p.el); }); 
+        platforms = [];
+        
+        // Béné se met au centre et au sol
+        player.style.left = "calc(50% - 20px)";
+        playerY = 0;
+        
+        // Danse pendant 4 secondes puis réduit l'écran
+        setTimeout(endSequence, 4000);
+    }
+
+    // --- PHASE 4 : RÉDUCTION ET LIENS FINAUX ---
     function endSequence() {
         gameActive = false;
         clearInterval(gameInterval);
         clearTimeout(platformSpawner);
         
-        // On nettoie le jeu
-        gameArea.innerHTML = '<div class="ground-line"></div><div id="player"></div>';
         gameArea.style.display = 'none';
         gameUI.style.display = 'none';
         hint.style.display = 'none';
