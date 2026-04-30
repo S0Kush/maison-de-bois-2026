@@ -108,13 +108,16 @@
     position: absolute; 
     bottom: 0; 
     left: 30px; 
-    width: 65px;  /* Garde une largeur fixe */
-    height: 85px; /* Garde une hauteur fixe */
+    width: 65px; 
+    height: 85px;
     z-index: 20; 
-    transition: left 1s ease-in-out;
-    background-size: contain;      /* L'image s'adapte sans déborder */
+    /* Force l'image à s'étirer pour remplir tout le cadre, 
+       ce qui compense les différences de découpe des PNG */
+    background-size: 100% 100%; 
     background-repeat: no-repeat;
-    background-position: bottom center; /* Très important pour que les pieds ne bougent pas */
+    background-position: center bottom;
+    /* Optionnel : ajoute ceci pour éviter le flou si tes sprites sont petits */
+    image-rendering: pixelated; 
 }
         
         .platform { 
