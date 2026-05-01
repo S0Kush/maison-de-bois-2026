@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -622,10 +623,11 @@
             <!-- Centre -->
             <div id="ds-center-btns">
                 <div id="quick-btns">
-                    <button class="quick-btn" onclick="openLink('https://www.instagram.com/p/DXuQVvaDCUo/')">📸 INSTA</button>
-                    <button class="quick-btn mute-btn" id="mute-btn" onclick="toggleMute()">🔇</button>
-                    <button class="quick-btn" onclick="openLink('https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets')">🎟️ DICE</button>
-                </div>
+    <!-- On utilise directement handleMenuSelect pour être cohérent -->
+    <button class="quick-btn" onclick="handleMenuSelect('insta')">📸 INSTA</button>
+    <button class="quick-btn mute-btn" id="mute-btn" onclick="toggleMute()">🔇</button>
+    <button class="quick-btn" onclick="handleMenuSelect('dice')">🎟️ DICE</button>
+</div>
                 <div id="start-select">
                     <div class="ss-btn" onclick="handleMenuNav()">SELECT</div>
                     <div class="ss-btn" onclick="handleMenuConfirm()">START</div>
@@ -781,15 +783,18 @@ function handleABtn() {
 }
 function handleMenuSelect(action) {
     switch(action) {
-        case 'play':  startSequence(); break;
-        case 'insta': openLink('https://www.instagram.com/p/DXuQVvaDCUo/'); break;
-        case 'dice':  openLink('https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets'); break;
+        case 'play':  
+            startSequence(); 
+            break;
+        case 'insta': 
+            window.open('https://www.instagram.com/p/DXuQVvaDCUo/', '_blank'); 
+            break;
+        case 'dice':  
+            window.open('https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets', '_blank'); 
+            break;
         case 'infos':
-            const infoEl = document.createElement('div');
-            infoEl.style.cssText = 'margin-top:20px;color:var(--cyan);font-size:0.6rem;text-align:center;font-family:Retro,sans-serif;line-height:2;';
-            infoEl.innerHTML = '📍 BIEN PUBLIC<br>BORDEAUX<br><span style="color:var(--yellow)">07.05.2026</span>';
-            menuScreen.appendChild(infoEl);
-            setTimeout(() => infoEl.remove(), 2500);
+            // Ouvre le lien Bien Public (Google Maps) en externe
+            window.open('https://maps.app.goo.gl/SvBkVRp89a1FYLTEA', '_blank');
             break;
     }
 }
@@ -962,14 +967,18 @@ function startDance() {
 
 // Cette fonction force la redirection ou l'action dès le contact du doigt
 function initMobileTouch() {
+    // On sélectionne tous les éléments interactifs
     const touchElements = document.querySelectorAll('.ds-btn, .ss-btn, .trigger, .quick-btn, .menu-item');
     
     touchElements.forEach(el => {
+        // On retire d'éventuels anciens écouteurs pour éviter les conflits
+        el.ontouchstart = null; 
+
         el.addEventListener('touchstart', function(e) {
-            // Empêche le navigateur de déclencher un "click" après le "touchstart"
+            // Empêche le double-clic et le zoom
             e.preventDefault(); 
             
-            // Exécute l'action associée au bouton
+            // On déclenche l'action au toucher
             if (this.onclick) {
                 this.onclick();
             }
