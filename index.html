@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -782,19 +781,27 @@ function handleABtn() {
     handleMenuSelect(menuActions[menuIndex]);
 }
 function handleMenuSelect(action) {
+    // On met à jour l'index visuel si on clique sur un item du menu
+    const items = ['play', 'insta', 'dice', 'infos'];
+    const newIndex = items.indexOf(action);
+    if (newIndex !== -1) {
+        document.querySelectorAll('.menu-item')[menuIndex].classList.remove('selected');
+        menuIndex = newIndex;
+        document.querySelectorAll('.menu-item')[menuIndex].classList.add('selected');
+    }
+
     switch(action) {
         case 'play':  
             startSequence(); 
             break;
         case 'insta': 
-            window.open('https://www.instagram.com/p/DXuQVvaDCUo/', '_blank'); 
+            window.location.href = 'https://www.instagram.com/p/DXuQVvaDCUo/'; 
             break;
         case 'dice':  
-            window.open('https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets', '_blank'); 
+            window.location.href = 'https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets'; 
             break;
         case 'infos':
-            // Ouvre le lien Bien Public (Google Maps) en externe
-            window.open('https://maps.app.goo.gl/SvBkVRp89a1FYLTEA', '_blank');
+            window.location.href = 'https://maps.app.goo.gl/SvBkVRp89a1FYLTEA';
             break;
     }
 }
@@ -967,18 +974,21 @@ function startDance() {
 
 // Cette fonction force la redirection ou l'action dès le contact du doigt
 function initMobileTouch() {
-    // On sélectionne tous les éléments interactifs
-    const touchElements = document.querySelectorAll('.ds-btn, .ss-btn, .trigger, .quick-btn, .menu-item');
+    // On cible TOUS les boutons : menu, ABXY, flèches, et boutons du bas
+    const touchElements = document.querySelectorAll('.menu-item, .ds-btn, .ss-btn, .trigger, .quick-btn, .link-item');
     
     touchElements.forEach(el => {
-        // On retire d'éventuels anciens écouteurs pour éviter les conflits
-        el.ontouchstart = null; 
-
         el.addEventListener('touchstart', function(e) {
-            // Empêche le double-clic et le zoom
-            e.preventDefault(); 
+            e.preventDefault(); // Bloque le délai mobile de 300ms
             
-            // On déclenche l'action au toucher
+            // Logique spécifique pour le premier menu (sélection visuelle)
+            if (this.classList.contains('menu-item')) {
+                const action = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                handleMenuSelect(action);
+                return;
+            }
+
+            // Logique pour les boutons de la console et autres
             if (this.onclick) {
                 this.onclick();
             }
