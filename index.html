@@ -1,7 +1,5 @@
 
 
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -636,12 +634,11 @@
 
             <!-- Droite : ABXY -->
             <div id="ds-buttons">
-                <div class="ds-btn" id="btn-a" onclick="handleABtn()">A</div>
-                <div class="ds-btn" id="btn-b" onclick="handleMenuNav()">B</div>
-                <div class="ds-btn" id="btn-x" onclick="handleMenuNav()">X</div>
-                <div class="ds-btn" id="btn-y" onclick="handleMenuNav()">Y</div>
-            </div>
-
+    <div class="ds-btn" id="btn-a" onclick="handleABtn()">A</div>
+    <div class="ds-btn" id="btn-b" onclick="handleMenuNav('down')">B</div>
+    <div class="ds-btn" id="btn-x" onclick="handleMenuNav('up')">X</div>
+    <div class="ds-btn" id="btn-y" onclick="handleMenuNav('down')">Y</div>
+</div>
         </div>
     </div><!-- /ds-bottom -->
 
@@ -757,11 +754,19 @@ document.addEventListener('click', function tryUnmute() {
 ============================================ */
 const menuActions = ['play', 'insta', 'dice', 'infos'];
 
-function handleMenuNav() {
+function handleMenuNav(direction = 'down') {
     if (gameActive || isDancing) return;
     const items = document.querySelectorAll('.menu-item');
     items[menuIndex].classList.remove('selected');
-    menuIndex = (menuIndex + 1) % items.length;
+
+    if (direction === 'up') {
+        // Remonte vers le haut
+        menuIndex = (menuIndex - 1 + items.length) % items.length;
+    } else {
+        // Descend vers le bas
+        menuIndex = (menuIndex + 1) % items.length;
+    }
+
     items[menuIndex].classList.add('selected');
 }
 function handleMenuConfirm() {
@@ -774,7 +779,6 @@ function handleABtn() {
     if (isDancing) return;
     handleMenuSelect(menuActions[menuIndex]);
 }
-
 function handleMenuSelect(action) {
     switch(action) {
         case 'play':  startSequence(); break;
@@ -958,19 +962,18 @@ function startDance() {
 
 // Cette fonction force la redirection ou l'action dès le contact du doigt
 function initMobileTouch() {
-    // On cible tous les éléments cliquables (menu, boutons DS, liens de fin)
-    const touchElements = document.querySelectorAll('.link-item, .menu-item, .ds-btn, .ss-btn, .trigger, .quick-btn');
+    const touchElements = document.querySelectorAll('.ds-btn, .ss-btn, .trigger, .quick-btn, .menu-item');
     
     touchElements.forEach(el => {
         el.addEventListener('touchstart', function(e) {
-            // Empêche certains comportements par défaut mais laisse passer le scroll
-            // On déclenche l'action manuellement pour bypasser les 300ms de délai
-            if (this.tagName === 'A' && this.href) {
-                window.location.href = this.href;
-            } else if (this.onclick) {
+            // Empêche le navigateur de déclencher un "click" après le "touchstart"
+            e.preventDefault(); 
+            
+            // Exécute l'action associée au bouton
+            if (this.onclick) {
                 this.onclick();
             }
-        }, { passive: true });
+        }, { passive: false });
     });
 }
 function endSequence() {
