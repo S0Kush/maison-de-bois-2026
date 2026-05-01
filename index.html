@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -254,18 +253,61 @@
         @keyframes floatUp { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(-50px);opacity:0} }
 
         /* Liens fin */
-        #links-container {
-            display:none; flex-direction:column; gap:5px;
-            width:100%; padding:4px 10px;
-            position:absolute; bottom:8px; z-index:30;
-        }
-        .link-item {
-            display:flex; align-items:center; gap:6px; padding:5px 10px;
-            border-radius:4px; font-size:0.55rem; color:white;
-            cursor:pointer; text-decoration:none; font-family:'Retro',sans-serif;
-            background:rgba(0,255,255,0.06); border-left:2px solid var(--cyan); transition:background 0.2s;
-        }
-        .link-item:hover { background:rgba(0,255,255,0.18); }
+/* Le conteneur centré sur l'écran du haut */
+/* Le conteneur centré sur l'écran du haut */
+#links-container {
+    display: none; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; 
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    background: rgba(0, 5, 10, 0.7); /* Fond très sombre et transparent */
+    backdrop-filter: blur(4px); /* Effet de flou derrière les boutons */
+}
+
+/* Boutons plus fins, transparents et colorés */
+.link-item {
+    width: 75%;
+    height: 50px; /* Moins épais, plus élégant */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    background: rgba(0, 255, 255, 0.05); /* Transparence légère */
+    color: var(--cyan) !important;
+    font-family: 'Retro', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    
+    border: 1px solid var(--cyan); /* Bordure fine */
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); /* Lueur subtile au lieu de l'ombre dure */
+    
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Le bouton Instagram en jaune avec sa propre transparence */
+.link-item:last-child {
+    color: var(--yellow) !important;
+    border-color: var(--yellow);
+    background: rgba(255, 255, 0, 0.05);
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.2);
+}
+
+/* Effet au clic : s'illumine */
+.link-item:active {
+    transform: scale(0.98);
+    background: rgba(0, 255, 255, 0.2);
+    box-shadow: 0 0 20px var(--cyan);
+}
 
         /* ============================================================
            CHARNIÈRE 3DS
@@ -430,6 +472,39 @@
             #ds-bottom-screen-wrap { display:none; }
             #ds-bottom { gap:5px; padding-bottom:13px; }
         }
+        /* Cette classe va forcer les boutons à prendre toute la place en fin de jeu */
+#instructions.end-game-mode {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+    height: 100%; /* Occupe tout l'écran inférieur */
+}
+
+.final-link {
+    width: 90%;
+    padding: 25px 0;
+    font-size: 24px !important; /* Très gros */
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+    border-radius: 15px;
+    border: 4px solid white;
+    color: white !important;
+    text-decoration: none;
+    box-shadow: 0 8px 0 #333;
+    transition: transform 0.1s;
+}
+
+.btn-billetterie { background-color: #ff0055; }
+.btn-instagram { background-color: #5851db; }
+
+.final-link:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #333;
+}
     </style>
 </head>
 <body>
@@ -602,6 +677,8 @@ const lcdText        = document.getElementById('lcd-text');
 const dsBottom       = document.getElementById('ds-bottom');
 const muteBtn        = document.getElementById('mute-btn');
 const ytPlayer       = document.getElementById('yt-player');
+const music = new Audio('https://github.com/S0Kush/maison-de-bois-2026/raw/refs/heads/main/kemcy%20+3%20CROSS.mp3');
+music.loop = true;
 
 /* ============================================
    SPRITES (inchangés)
@@ -723,6 +800,7 @@ function openLink(url) { window.open(url, '_blank'); }
    LANCEMENT
 ============================================ */
 function startSequence() {
+    music.play();
     menuScreen.style.display = 'none';
     loadingScreen.style.display = 'flex';
     lcdText.innerHTML = 'LOADING SWAG...';
@@ -741,6 +819,7 @@ function startSequence() {
 }
 
 function startGame() {
+    music.play();
     gameArea.style.display = 'block';
     gameArea.classList.add('fade-in');
     setTimeout(() => gameArea.classList.remove('fade-in'), 800);
@@ -879,16 +958,22 @@ function startDance() {
     const dl=setInterval(()=>{ animFrame++; player.style.backgroundImage=spriteDance[Math.floor(animFrame/10)%3]; },16);
     setTimeout(()=>{ clearInterval(dl); endSequence(); },4000);
 }
-
 function endSequence() {
-    gameArea.style.display='none'; gameUI.style.display='none';
-    hintText.classList.remove('visible'); dsBottom.classList.remove('game-active');
-    screen.style.height='230px';
-    setTimeout(()=>{
-        linksContainer.style.display='flex';
-        const t=document.querySelector('#ds-titlebar span');
-        if(t){ t.textContent='🎉 PARTY LOADED!'; t.style.color='var(--yellow)'; }
-    },700);
+    // 1. On cache le jeu
+    gameArea.style.display = 'none'; 
+    gameUI.style.display = 'none';
+    hintText.classList.remove('visible'); 
+    dsBottom.classList.remove('game-active');
+    
+    // 2. On affiche les boutons sur l'écran du haut
+    linksContainer.style.display = 'flex'; 
+    
+    // 3. Mise à jour du titre 3DS
+    const t = document.querySelector('#ds-titlebar span');
+    if(t) { 
+        t.textContent = '🎉 PARTY LOADED!'; 
+        t.style.color = 'var(--yellow)'; 
+    }
 }
 
 /* ============================================
@@ -902,6 +987,14 @@ document.addEventListener('keydown',e=>{
 });
 screen.addEventListener('click',()=>{ if(gameActive)jump(); });
 screen.addEventListener('touchstart',e=>{ e.preventDefault(); if(gameActive)jump(); },{passive:false});
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        music.pause();
+    } else {
+        if (gameActive || isDancing) music.play();
+    }
+});
 </script>
 </body>
 </html>
