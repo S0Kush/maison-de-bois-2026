@@ -254,7 +254,6 @@
 
         /* Liens fin */
 /* Le conteneur centré sur l'écran du haut */
-/* Le conteneur centré sur l'écran du haut */
 #links-container {
     display: none; 
     flex-direction: column;
@@ -266,47 +265,32 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 50;
-    background: rgba(0, 5, 10, 0.7); /* Fond très sombre et transparent */
-    backdrop-filter: blur(4px); /* Effet de flou derrière les boutons */
+    z-index: 9999; /* Force le passage au-dessus de tout pour le clic mobile */
+    background: rgba(0, 10, 20, 0.75); 
+    backdrop-filter: blur(5px);
 }
 
-/* Boutons plus fins, transparents et colorés */
 .link-item {
-    width: 75%;
-    height: 50px; /* Moins épais, plus élégant */
+    width: 80%;
+    height: 55px; 
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    background: rgba(0, 255, 255, 0.05); /* Transparence légère */
+    background: rgba(0, 255, 255, 0.1); /* Fond très léger */
     color: var(--cyan) !important;
     font-family: 'Retro', sans-serif;
     font-size: 0.9rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
     text-decoration: none;
-    
-    border: 1px solid var(--cyan); /* Bordure fine */
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); /* Lueur subtile au lieu de l'ombre dure */
-    
-    transition: all 0.2s ease;
-    cursor: pointer;
+    border: 1px solid var(--cyan);
+    border-radius: 4px;
+    pointer-events: auto; /* Assure que le clic passe */
+    touch-action: manipulation; /* Optimise le tap sur mobile */
 }
 
-/* Le bouton Instagram en jaune avec sa propre transparence */
 .link-item:last-child {
     color: var(--yellow) !important;
     border-color: var(--yellow);
     background: rgba(255, 255, 0, 0.05);
-    box-shadow: 0 0 10px rgba(255, 255, 0, 0.2);
-}
-
-/* Effet au clic : s'illumine */
-.link-item:active {
-    transform: scale(0.98);
-    background: rgba(0, 255, 255, 0.2);
-    box-shadow: 0 0 20px var(--cyan);
 }
 
         /* ============================================================
@@ -753,7 +737,7 @@ function toggleMute() {
 // Tente de démarrer non-muté au premier clic
 document.addEventListener('click', function tryUnmute() {
     if (isMuted) return;
-    ytPlayer.src = 'https://www.youtube.com/embed/hg2GdzfiQ2U?autoplay=1&loop=1&playlist=hg2GdzfiQ2U&enablejsapi=1&controls=0&mute=0';
+
     document.removeEventListener('click', tryUnmute);
 }, { once: true });
 
