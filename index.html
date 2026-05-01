@@ -5,91 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MAISON DE BOIS - 2008-2018 EXPERIENCE</title>
     <style>
-
-        @keyframes itemGlow {
-    0% { filter: drop-shadow(0 0 5px var(--cyan)); transform: scale(1); }
-    50% { filter: drop-shadow(0 0 15px var(--yellow)); transform: scale(1.1); }
-    100% { filter: drop-shadow(0 0 5px var(--cyan)); transform: scale(1); }
-}
-
-.swag-item {
-    /* ... tes propriétés actuelles ... */
-    animation: itemGlow 1.5s infinite ease-in-out;
-}
-.trash-item {
-    position: absolute;
-    width: 100px; /* Plus gros */
-    height: 120px; 
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: bottom center;
-    z-index: 20;
-    /* Ombre noire pour le détacher du fond sans faire "bonus" */
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.7)); 
-    /* Animation de marche légère pour le flic si tu veux */
-    transition: transform 0.1s;
-}
-
-/* Style spécifique pour la Puff qui est souvent plus petite en réalité */
-.trash-item[style*="Puff"] {
-    width: 60px;
-    height: 80px;
-}
-
-.trash-popup {
-    position: absolute;
-    color: #ff0000; /* Rouge pour le côté "pas bien" */
-    font-family: 'Retro', sans-serif;
-    font-size: 1rem;
-    font-weight: bold;
-    text-shadow: 1px 1px 0px #fff;
-    pointer-events: none;
-    z-index: 100;
-    animation: floatUp 0.8s ease-out forwards;
-}
-
-/* Style pour les messages flottants */
-.swag-popup {
-    position: absolute;
-    color: var(--yellow);
-    font-family: 'Retro', sans-serif;
-    font-size: 1.2rem;
-    font-style: italic;
-    text-shadow: 2px 2px 0px var(--pink);
-    pointer-events: none;
-    z-index: 100;
-    animation: floatUp 0.8s ease-out forwards;
-}
-
-@keyframes floatUp {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-50px); opacity: 0; }
-}
-
-
-
-        @font-face {
-            font-family: 'Retro';
-            src: local('Impact'), local('Arial Black');
-        }
-
+        /* ============================================
+           VARIABLES & RESET
+        ============================================ */
         :root {
             --pink: #ff00ff;
             --green: #00ff00;
             --purple: #8a2be2;
             --cyan: #00ffff;
             --yellow: #ffff00;
+            /* iPod Classic palette */
+            --ipod-white: #f0eeeb;
+            --ipod-silver: #c8c8c8;
+            --ipod-dark: #2a2a2a;
+            --ipod-screen: #1a1a2e;
+            --ipod-screen-light: #16213e;
+            --ipod-wheel: #d4d0cb;
+            --ipod-wheel-dark: #a09a93;
+            --ipod-btn: #e8e4df;
         }
 
+        @font-face { font-family: 'Retro'; src: local('Impact'), local('Arial Black'); }
+
+        * { box-sizing: border-box; }
+
         body {
-            background-color: #000; color: white;
+            background-color: #000;
+            color: white;
             font-family: 'Courier New', Courier, monospace;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0; overflow: hidden;
-            background: linear-gradient(45deg, #000, #1a0033, #001a1a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a0015, #001a1a, #150025);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            user-select: none; -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         @keyframes gradientBG {
@@ -98,296 +52,978 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* ============================================
+           AMBIANCE / DÉCOR
+        ============================================ */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.15) 50%),
+                        linear-gradient(90deg, rgba(255,0,0,0.04), rgba(0,255,0,0.015), rgba(0,0,255,0.04));
             background-size: 100% 4px, 3px 100%;
             pointer-events: none; z-index: 50;
         }
 
         .shape {
-            position: absolute; z-index: -1; opacity: 0.5;
+            position: absolute; z-index: 0; opacity: 0.4;
             animation: float 20s infinite alternate ease-in-out;
         }
         .shape-glitch { animation: float 15s infinite alternate-reverse, glitchPulse 3s infinite; }
 
         @keyframes float {
             0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-            100% { transform: translate(150px, -100px) rotate(360deg) scale(1.2); }
+            100% { transform: translate(120px, -80px) rotate(360deg) scale(1.15); }
         }
         @keyframes glitchPulse {
             0%, 100% { filter: drop-shadow(0 0 5px var(--cyan)); }
             50% { filter: drop-shadow(0 0 15px var(--pink)); }
         }
 
+        /* ============================================
+           CONTENEUR PRINCIPAL - Wrapper iPod
+        ============================================ */
         #main-container {
-            text-align: center; border: 2px solid var(--cyan); padding: 25px;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
-            border-radius: 20px; box-shadow: 0 0 40px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
-            max-width: 600px; width: 90%; position: relative; z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+            z-index: 10;
         }
 
-        h1 {
-            font-family: 'Retro', sans-serif; font-size: 2.2rem; margin-top: 0; margin-bottom: 5px;
-            background: linear-gradient(to bottom, #fff 0%, var(--pink) 50%, var(--purple) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(2px 2px 0px var(--cyan)); font-style: italic;
+        /* ============================================
+           IPOD CLASSIC DESIGN
+           NOUVEAU : Menu principal en forme d'iPod
+        ============================================ */
+        #ipod-shell {
+            width: 280px;
+            background: linear-gradient(160deg, var(--ipod-white) 0%, #e0ddd8 60%, #c8c4be 100%);
+            border-radius: 36px;
+            padding: 20px 20px 28px 20px;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,0.8) inset,
+                0 2px 0 0 rgba(255,255,255,0.9) inset,
+                8px 8px 30px rgba(0,0,0,0.5),
+                -2px -2px 8px rgba(255,255,255,0.3),
+                0 0 60px rgba(0,255,255,0.15);
+            position: relative;
+            transition: transform 0.3s ease;
         }
 
-        .status-screen {
-            background: linear-gradient(180deg, #0a0a0a, #1a1a1a);
-            border: 3px solid var(--pink); border-radius: 10px; 
-            height: 160px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            margin: 20px 0; position: relative; box-shadow: inset 0 0 20px #000;
+        /* Brillance du boîtier */
+        #ipod-shell::before {
+            content: '';
+            position: absolute;
+            top: 12px; left: 16px; right: 60%;
+            height: 45%;
+            background: linear-gradient(160deg, rgba(255,255,255,0.6) 0%, transparent 100%);
+            border-radius: 28px 28px 50% 28px;
+            pointer-events: none;
+        }
+
+        /* Petite LED qui clignote */
+        #ipod-shell::after {
+            content: '';
+            position: absolute;
+            top: 18px; right: 22px;
+            width: 6px; height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+            animation: ledBlink 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--cyan);
+        }
+        @keyframes ledBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        /* Logo iPod stylisé */
+        #ipod-logo {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--ipod-dark);
+            font-family: 'Retro', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            opacity: 0.6;
+        }
+
+        /* ============================================
+           ÉCRAN DE L'IPOD
+        ============================================ */
+        #ipod-screen-wrap {
+            background: var(--ipod-screen);
+            border-radius: 14px;
+            padding: 3px;
+            box-shadow:
+                inset 0 2px 8px rgba(0,0,0,0.8),
+                0 1px 0 rgba(255,255,255,0.5);
+            margin-bottom: 16px;
+            border: 1px solid #888;
+        }
+
+        #screen {
+            background: linear-gradient(180deg, #0a0a1a, #141428);
+            border-radius: 12px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
             overflow: hidden;
+            /* FIX: transition fluide pour l'agrandissement du screen */
             transition: height 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .lcd-text { color: var(--cyan); font-weight: bold; font-size: 0.9rem; text-shadow: 0 0 5px var(--cyan); margin-bottom: 15px; }
+        /* Barre de titre style iPod */
+        #ipod-titlebar {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 22px;
+            background: linear-gradient(180deg, #3a6bcc, #1a4aaa);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 8px;
+            border-radius: 12px 12px 0 0;
+        }
+        #ipod-titlebar span {
+            font-size: 0.55rem;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        #ipod-battery {
+            display: flex; align-items: center; gap: 3px;
+        }
+        #ipod-battery-bar {
+            width: 20px; height: 9px;
+            border: 1.5px solid white;
+            border-radius: 2px;
+            position: relative;
+            padding: 1px;
+        }
+        #ipod-battery-bar::after {
+            content: '';
+            position: absolute;
+            right: -4px; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 5px;
+            background: white;
+            border-radius: 0 1px 1px 0;
+        }
+        #ipod-battery-fill {
+            height: 100%;
+            width: 80%;
+            background: var(--green);
+            border-radius: 1px;
+            animation: batteryPulse 3s ease-in-out infinite;
+        }
+        @keyframes batteryPulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
 
+        /* Contenu de l'écran - Menu */
+        #menu-screen {
+            margin-top: 22px;
+            width: 100%;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .menu-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            color: var(--ipod-white);
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .menu-item.selected {
+            background: linear-gradient(90deg, #3a6bcc, #1a4aaa);
+            color: white;
+        }
+        .menu-item .menu-icon { font-size: 0.75rem; margin-right: 6px; }
+        .menu-arrow { opacity: 0.5; font-size: 0.6rem; }
+
+        /* Écran de chargement */
+        #loading-screen { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-top: 22px; width: 100%; height: calc(100% - 22px); }
+        #lcd-text { color: var(--cyan); font-size: 0.7rem; text-shadow: 0 0 5px var(--cyan); }
+        #loading-bar { width: 80%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 50px; overflow: hidden; border: 1px solid var(--cyan); }
+        #loading-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.15s; }
+
+        /* GAME UI dans l'écran */
+        #game-ui {
+            display: none;
+            width: 100%;
+            position: absolute;
+            top: 22px;
+            text-align: center;
+            z-index: 30;
+            padding: 4px 8px;
+        }
+        #game-ui-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+        #game-ui .swag-label { font-size: 0.5rem; color: var(--cyan); white-space: nowrap; }
         .progress-bar-curved {
-            width: 80%; height: 15px; background: rgba(255,255,255,0.1);
-            border-radius: 50px; overflow: hidden; border: 1px solid var(--cyan);
-            box-shadow: 0 0 10px rgba(0,255,255,0.2); display: none;
+            flex: 1; height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px; overflow: hidden;
+            border: 1px solid var(--cyan);
         }
         .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); transition: width 0.2s; }
 
-        #game-area { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: rgba(0, 255, 255, 0.05); }
-        
-        #background-layer { 
-            position: absolute; top: 0; left: 0; height: 100%; width: 600%; 
-            display: flex; will-change: transform; pointer-events: none; z-index: 1;
+        /* Zone de jeu */
+        #game-area {
+            display: none;
+            width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0;
+            /* FIX: fond noir de base pour éviter les artefacts */
+            background: #111;
         }
-        .bg-slice { 
-    width: 16.66%; 
-    height: 100%; 
-    /* On force l'image à s'afficher entièrement dans sa tranche */
-    background-size: 100% 100%; 
-    background-position: center;
-    background-repeat: no-repeat;
-}
+
+        /* NOUVEAU : Fade-in au lancement */
+        #game-area.fade-in {
+            animation: gameAppear 0.8s ease forwards;
+        }
+        @keyframes gameAppear {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Fond défilant */
+        #background-layer {
+            position: absolute; top: 0; left: 0; height: 100%; width: 600%;
+            display: flex;
+            will-change: transform;
+            pointer-events: none; z-index: 1;
+            /* FIX: image-rendering pour éviter les micro-saccades entre slices */
+            image-rendering: auto;
+        }
+        .bg-slice {
+            width: 16.66%;
+            height: 100%;
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* FIX: évite le gap entre les tranches */
+            flex-shrink: 0;
+        }
+
         .img-1 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD1.jpg?raw=true'); }
         .img-2 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD2.jpg?raw=true'); }
         .img-3 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD3.jpg?raw=true'); }
         .img-4 { background-image: url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/FD4.jpg?raw=true'); }
-#player {
-    position: absolute;
-    bottom: 0;
-    left: 30px;
-    height: 160px; /* On l'agrandit nettement */
-    aspect-ratio: 1 / 1; /* Force un carré parfait pour éviter l'écrasement */
-    z-index: 20;
-    background-size: contain; 
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    image-rendering: pixelated;
-    transition: bottom 0.02s linear;
-}
-        
+
+        /* Joueur */
+        #player {
+            position: absolute;
+            bottom: 0;
+            left: 30px;
+            height: 160px;
+            aspect-ratio: 1 / 1;
+            z-index: 20;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            image-rendering: pixelated;
+            transition: bottom 0.02s linear;
+            /* FIX: transition de position X fluide pour la danse */
+            transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.02s linear;
+        }
+
+        /* Objets swag */
         .swag-item {
             position: absolute; width: 40px; height: 40px;
             background-size: contain; background-repeat: no-repeat;
             z-index: 18; pointer-events: none;
+            animation: itemGlow 1.5s infinite ease-in-out;
+        }
+        @keyframes itemGlow {
+            0% { filter: drop-shadow(0 0 5px var(--cyan)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 15px var(--yellow)); transform: scale(1.1); }
+            100% { filter: drop-shadow(0 0 5px var(--cyan)); transform: scale(1); }
         }
 
+        /* Objets trash (flic, poubelle, puff) */
+        .trash-item {
+            position: absolute;
+            width: 100px; height: 120px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom center;
+            z-index: 20;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.7));
+            transition: transform 0.1s;
+        }
+
+        /* Ligne de sol */
         .ground-line {
             position: absolute; bottom: 0; width: 100%; height: 2px;
             background: var(--pink); box-shadow: 0 0 10px var(--pink); z-index: 10;
         }
 
-        .action-btn {
-            background: linear-gradient(to bottom, var(--cyan), var(--purple));
-            color: white; border: 2px solid #fff; padding: 15px 30px;
-            font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 50px;
-            text-transform: uppercase; box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
-            font-family: 'Retro', sans-serif; animation: pulseBtn 2s infinite;
+        /* Popups flottants */
+        .swag-popup {
+            position: absolute;
+            color: var(--yellow);
+            font-family: 'Retro', sans-serif;
+            font-size: 1rem;
+            font-style: italic;
+            text-shadow: 2px 2px 0px var(--pink);
+            pointer-events: none; z-index: 100;
+            animation: floatUp 0.8s ease-out forwards;
         }
-        @keyframes pulseBtn { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
-        #links-container { display: none; flex-direction: column; gap: 15px; width: 100%; margin-top: 10px; }
-        .link-btn {
-            text-decoration: none; padding: 15px; background: var(--green); color: black;
-            font-weight: 900; clip-path: polygon(5% 0%, 100% 0%, 95% 100%, 0% 100%);
-            transition: 0.2s; font-family: 'Retro', sans-serif; font-size: 1.1rem; text-transform: uppercase;
+        .trash-popup {
+            position: absolute;
+            color: #ff4444;
+            font-family: 'Retro', sans-serif;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 0px #fff;
+            pointer-events: none; z-index: 100;
+            animation: floatUp 0.8s ease-out forwards;
         }
-        .link-btn:hover { transform: skew(-5deg) scale(1.02); background: var(--yellow); box-shadow: 5px 5px 0px var(--pink); }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
 
-        .meme-gif { width: 60px; margin-top: 10px; border-radius: 5px; border: 2px solid white; display: none; z-index: 40; }
-        .hint-text { font-size: 0.7rem; color: var(--yellow); margin-top: 10px; display: none; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        /* ============================================
+           CLICK WHEEL iPod
+           NOUVEAU : Remplacement du bouton "BOOT"
+        ============================================ */
+        #click-wheel-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
 
+        /* Boutons petits au-dessus de la wheel (Menu / Next) */
+        #quick-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .quick-btn {
+            background: linear-gradient(180deg, var(--ipod-btn), var(--ipod-silver));
+            border: none;
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 0.55rem;
+            font-weight: bold;
+            color: var(--ipod-dark);
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.6) inset;
+            transition: all 0.1s;
+            text-transform: uppercase;
+            font-family: 'Retro', sans-serif;
+        }
+        .quick-btn:active { transform: scale(0.95); box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .quick-btn.mute-btn { background: linear-gradient(180deg, #555, #333); color: white; font-size: 0.6rem; }
+
+        /* Click Wheel principal */
+        #click-wheel {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+
+        /* Anneau extérieur */
+        #wheel-ring {
+            width: 160px; height: 160px;
+            background: radial-gradient(circle at 35% 35%,
+                var(--ipod-wheel) 0%,
+                var(--ipod-wheel-dark) 60%,
+                #888 100%);
+            border-radius: 50%;
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.5),
+                0 1px 0 rgba(255,255,255,0.4) inset,
+                inset 0 -3px 6px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        #wheel-ring:active { transform: scale(0.98); }
+
+        /* Labels MENU / REW / FFW / PLAY sur le wheel */
+        .wheel-label {
+            position: absolute;
+            font-size: 0.45rem;
+            font-weight: bold;
+            color: var(--ipod-dark);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Retro', sans-serif;
+            opacity: 0.75;
+        }
+        .wl-top { top: 10px; left: 50%; transform: translateX(-50%); }
+        .wl-left { left: 8px; top: 50%; transform: translateY(-50%); }
+        .wl-right { right: 8px; top: 50%; transform: translateY(-50%); }
+        .wl-bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
+
+        /* Bouton central PLAY */
+        #center-btn {
+            width: 68px; height: 68px;
+            background: radial-gradient(circle at 35% 30%,
+                #f5f5f5 0%,
+                #d8d5d0 50%,
+                #bbb 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow:
+                0 3px 8px rgba(0,0,0,0.4),
+                0 1px 0 rgba(255,255,255,0.6) inset;
+            transition: all 0.1s;
+            position: absolute;
+            z-index: 2;
+        }
+        #center-btn:active { transform: scale(0.94); box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+        #center-btn-label {
+            font-family: 'Retro', sans-serif;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--ipod-dark);
+            letter-spacing: 1px;
+        }
+
+        /* Animation glow quand le jeu est actif (hint de taper) */
+        #click-wheel.game-active #wheel-ring {
+            animation: wheelGlow 1.5s ease-in-out infinite;
+        }
+        @keyframes wheelGlow {
+            0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.4) inset, inset 0 -3px 6px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 4px 20px rgba(0,255,255,0.4), 0 1px 0 rgba(255,255,255,0.4) inset, inset 0 -3px 6px rgba(0,0,0,0.3); }
+        }
+
+        /* Hint texte */
+        #hint-text {
+            font-size: 0.55rem;
+            color: var(--cyan);
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: none;
+            text-align: center;
+        }
+        #hint-text.visible {
+            opacity: 1;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* ============================================
+           LIENS FINAUX (après le jeu)
+        ============================================ */
+        #links-container {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            padding: 4px 8px;
+            position: absolute;
+            bottom: 8px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Retro', sans-serif;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.2s;
+        }
+        .link-item:hover { background: rgba(58, 107, 204, 0.5); }
+
+        /* ============================================
+           GIF meme fin de partie
+        ============================================ */
+        .meme-gif {
+            width: 60px; height: auto;
+            border-radius: 5px;
+            border: 2px solid white;
+            display: none;
+        }
+
+        /* ============================================
+           RESPONSIVE MOBILE PAYSAGE
+        ============================================ */
         @media screen and (max-width: 900px) and (orientation: landscape) {
-    #main-container {
-        width: 95%;
-        padding: 10px;
-    }
-    .status-screen {
-        height: 200px; /* On gagne de la place pour le décor */
-    }
-    h1 { font-size: 1.5rem; }
-}
+            #ipod-shell { width: 260px; padding: 14px 16px 20px 16px; }
+            #screen { height: 180px; }
+            #click-wheel { width: 140px; height: 140px; }
+            #wheel-ring { width: 140px; height: 140px; }
+            #center-btn { width: 58px; height: 58px; }
+        }
     </style>
 </head>
 <body>
 
+<!-- Ambiance visuelle -->
 <div class="scanlines"></div>
+<svg class="shape" style="top:5%; left:5%; width:150px;" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="10 5"/>
+</svg>
+<svg class="shape shape-glitch" style="bottom:10%; right:5%; width:180px;" viewBox="0 0 200 200">
+    <rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)"/>
+</svg>
 
-<svg class="shape" style="top:5%; left:5%; width:150px;" viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="10 5"/></svg>
-<svg class="shape shape-glitch" style="bottom:10%; right:5%; width:180px;" viewBox="0 0 200 200"><rect x="50" y="50" width="100" height="100" stroke="var(--green)" stroke-width="2" fill="none" transform="rotate(45 100 100)" /></svg>
-
+<!-- ============================================
+     IPOD PRINCIPAL
+============================================ -->
 <div id="main-container">
-    <h1>MAISON DE BOIS</h1>
-    <div style="font-weight: bold; color: var(--yellow); font-size: 0.75rem; letter-spacing: 2px;">BIEN PUBLIC • BORDEAUX • 07.05</div>
-    
-    <div class="status-screen" id="screen" onclick="jump()" ontouchstart="jump()">
-        <div id="lcd-text" class="lcd-text">[ SYSTEM STATUS: IDLE ]</div>
-        <div id="loading-bar" class="progress-bar-curved"><div id="loading-fill" class="progress-fill"></div></div>
-        
-        <div id="game-ui" style="display:none; width: 100%; position: absolute; top: 10px; text-align: center; z-index: 30;">
-            <div style="font-size: 0.6rem; color: var(--cyan); margin-bottom: 5px;">SWAG LEVEL</div>
-            <div class="progress-bar-curved" style="display: inline-block; width: 70%; height: 10px; border-radius: 50px;"><div id="game-fill" class="progress-fill"></div></div>
-        </div>
+    <div id="ipod-shell">
 
-        <div id="game-area">
-            <div id="background-layer">
-                <div class="bg-slice img-1"></div>
-                <div class="bg-slice img-2"></div>
-                <div class="bg-slice img-3"></div>
-                <div class="bg-slice img-1"></div>
-                <div class="bg-slice img-2"></div>
-                <div class="bg-slice img-4"></div>
+        <!-- Logo -->
+        <div id="ipod-logo">♪ MAISON DE BOIS ♪</div>
+
+        <!-- Écran -->
+        <div id="ipod-screen-wrap">
+            <div id="screen">
+
+                <!-- Barre de titre type iPod -->
+                <div id="ipod-titlebar">
+                    <span>MAISON DE BOIS</span>
+                    <div id="ipod-battery">
+                        <span style="font-size:0.45rem;color:white;">SWAG</span>
+                        <div id="ipod-battery-bar"><div id="ipod-battery-fill"></div></div>
+                    </div>
+                </div>
+
+                <!-- MENU iPod (état initial) -->
+                <div id="menu-screen">
+                    <div class="menu-item selected" id="menu-play" onclick="handleMenuSelect('play')">
+                        <span><span class="menu-icon">▶</span>PLAY GAME</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" id="menu-insta" onclick="handleMenuSelect('insta')">
+                        <span><span class="menu-icon">📸</span>INSTAGRAM</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" id="menu-dice" onclick="handleMenuSelect('dice')">
+                        <span><span class="menu-icon">🎟️</span>BILLETTERIE DICE</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                    <div class="menu-item" id="menu-infos" onclick="handleMenuSelect('infos')">
+                        <span><span class="menu-icon">📍</span>BIEN PUBLIC • 07.05</span>
+                        <span class="menu-arrow">›</span>
+                    </div>
+                </div>
+
+                <!-- LOADING (état chargement) -->
+                <div id="loading-screen">
+                    <div id="lcd-text">LOADING SWAG...</div>
+                    <div id="loading-bar"><div id="loading-fill"></div></div>
+                </div>
+
+                <!-- GAME UI (swag bar visible pendant le jeu) -->
+                <div id="game-ui">
+                    <div id="game-ui-inner">
+                        <span class="swag-label">SWAG</span>
+                        <div class="progress-bar-curved"><div id="game-fill" class="progress-fill"></div></div>
+                        <span class="swag-label" id="swag-count">0%</span>
+                    </div>
+                </div>
+
+                <!-- ZONE DE JEU -->
+                <div id="game-area">
+                    <div id="background-layer">
+                        <div class="bg-slice img-1"></div>
+                        <div class="bg-slice img-2"></div>
+                        <div class="bg-slice img-3"></div>
+                        <div class="bg-slice img-1"></div>
+                        <div class="bg-slice img-2"></div>
+                        <div class="bg-slice img-4"></div>
+                    </div>
+                    <div class="ground-line"></div>
+                    <div id="player"></div>
+                </div>
+
+                <!-- Liens fin de partie (dans l'écran) -->
+                <div id="links-container">
+                    <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-item" target="_blank">
+                        🎟️ BILLETTERIE DICE
+                    </a>
+                    <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-item" target="_blank">
+                        📸 INSTAGRAM POST
+                    </a>
+                </div>
+
+            </div><!-- /screen -->
+        </div><!-- /ipod-screen-wrap -->
+
+        <!-- CLICK WHEEL -->
+        <div id="click-wheel-wrap">
+
+            <!-- Boutons rapides : accès directs + mute -->
+            <!-- NOUVEAU : Boutons discrets au-dessus de la wheel -->
+            <div id="quick-btns">
+                <button class="quick-btn" onclick="openLink('https://www.instagram.com/p/DXuQVvaDCUo/')">📸 INSTA</button>
+                <button class="quick-btn mute-btn" id="mute-btn" onclick="toggleMute()">🔇</button>
+                <button class="quick-btn" onclick="openLink('https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets')">🎟️ DICE</button>
             </div>
-            <div class="ground-line"></div>
-            <div id="player"></div>
-        </div>
-        <img id="meme" class="meme-gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueGZueXFpZ3R4bmZueXFpZ3R4bmZueXFpZ3R4bmZueXFpJnB0PWFjdGl2ZV9mZWVk/sIIhZmxU2XfTq/giphy.gif">
-    </div>
 
-    <div id="hint" class="hint-text">TAP TO COLLECT SWAG!</div>
-    <button id="main-btn" class="action-btn" onclick="startSequence()">BOOT SYSTEM</button>
+            <!-- La roue -->
+            <div id="click-wheel">
+                <div id="wheel-ring" onclick="handleWheelClick()">
+                    <span class="wheel-label wl-top">MENU</span>
+                    <span class="wheel-label wl-left">◀◀</span>
+                    <span class="wheel-label wl-right">▶▶</span>
+                    <span class="wheel-label wl-bottom">♪</span>
+                    <!-- Bouton central -->
+                    <div id="center-btn" onclick="handleCenterBtn(event)">
+                        <span id="center-btn-label">PLAY</span>
+                    </div>
+                </div>
+            </div>
 
-    <div id="links-container">
-        <a href="https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets" class="link-btn" target="_blank">🎟️ BILLETTERIE DICE</a>
-        <a href="https://www.instagram.com/p/DXuQVvaDCUo/" class="link-btn" style="background: var(--pink); color: white;" target="_blank">📸 INSTAGRAM POST</a>
-    </div>
-</div>
+            <!-- Hint tap -->
+            <div id="hint-text">TAP WHEEL TO JUMP</div>
+
+        </div><!-- /click-wheel-wrap -->
+
+    </div><!-- /ipod-shell -->
+</div><!-- /main-container -->
+
+
+<!-- ============================================
+     AUDIO
+     NOUVEAU : Musique de fond via YouTube IFrame API
+     Note : YouTube interdit l'autoplay audio direct.
+     On utilise un fallback avec un lien audio indirect.
+============================================ -->
+<iframe id="yt-player"
+    src="https://www.youtube.com/embed/hg2GdzfiQ2U?autoplay=1&loop=1&playlist=hg2GdzfiQ2U&enablejsapi=1&controls=0&mute=1"
+    style="display:none;" allow="autoplay" title="music"></iframe>
+
 
 <script>
+/* ============================================
+   ÉTAT GLOBAL DU JEU
+============================================ */
+const screen       = document.getElementById('screen');
+const gameArea     = document.getElementById('game-area');
+const bgLayer      = document.getElementById('background-layer');
+const gameUI       = document.getElementById('game-ui');
+const gameFill     = document.getElementById('game-fill');
+const swagCount    = document.getElementById('swag-count');
+const player       = document.getElementById('player');
+const hintText     = document.getElementById('hint-text');
+const linksContainer = document.getElementById('links-container');
+const menuScreen   = document.getElementById('menu-screen');
+const loadingScreen= document.getElementById('loading-screen');
+const loadingFill  = document.getElementById('loading-fill');
+const lcdText      = document.getElementById('lcd-text');
+const clickWheel   = document.getElementById('click-wheel');
+const centerBtnLabel = document.getElementById('center-btn-label');
+const ytPlayer     = document.getElementById('yt-player');
+const muteBtn      = document.getElementById('mute-btn');
 
+// Navigation du menu iPod
+let selectedMenuItem = 0;
+const menuItems = ['menu-play', 'menu-insta', 'menu-dice', 'menu-infos'];
 
-const trashPhrases = ["C'EST NUL !", "PAS SWAG...", "LA HONTE !", "ZÉRO STYLE", "CHEUM", "AÏE AÏE AÏE"];
-    const screen = document.getElementById('screen');
-    const btn = document.getElementById('main-btn');
-    const lcdText = document.getElementById('lcd-text');
-    const loadBar = document.getElementById('loading-bar');
-    const loadFill = document.getElementById('loading-fill');
-    const gameArea = document.getElementById('game-area');
-    const bgLayer = document.getElementById('background-layer');
-    const gameUI = document.getElementById('game-ui');
-    const gameFill = document.getElementById('game-fill');
-    const player = document.getElementById('player');
-    const hint = document.getElementById('hint');
-    const links = document.getElementById('links-container');
-    const meme = document.getElementById('meme');
-
-   const spriteWalk = [
+/* ============================================
+   SPRITES
+============================================ */
+const spriteWalk = [
     "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche1.png?raw=true')",
     "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%202.png?raw=true')",
     "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%203.png?raw=true')",
     "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Marche%204.png?raw=true')"
 ];
-    const spriteJump = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true')"];
-    const spriteDance = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true')"];
-    const spriteAction = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Action%201%20(4).png?raw=true')"];
+const spriteJump  = ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Saut%201%20(2).png?raw=true')"];
+const spriteDance = [
+    "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Dance%201%20(3).png?raw=true')",
+    "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%202(3).png?raw=true')",
+    "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Danse%203%20(3).png?raw=true')"
+];
 
-    // CONFIGURATION DES OBJETS (Assignation spécifique)
-    // x: Position sur le fond (0 à 6000 env), y: hauteur depuis le sol
-    const swagObjectsConfig = [
-        { id: 'obj1', x: 800, y: 40, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/WATIB.png?raw=true')" },
-        { id: 'obj2', x: 1500, y: 120, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/PETSHOP.png?raw=true')" },
-        { id: 'obj3', x: 2200, y: 60, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/LUNETTE%20SWAG.png?raw=true')" },
-        { id: 'obj4', x: 3500, y: 100, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/IPOD.png?raw=true')" },
-        { id: 'obj5', x: 4800, y: 40, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/HANDSPINNER.png?raw=true')" }
-    ];
+/* ============================================
+   CONFIG OBJETS
+   FIX : L'iPod (obj4) avancé à x:3800 pour être
+   atteignable dans le segment 4 (FD4)
+============================================ */
+const swagObjectsConfig = [
+    { id: 'obj1', x: 800,  y: 40,  img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/WATIB.png?raw=true')" },
+    { id: 'obj2', x: 1500, y: 120, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/PETSHOP.png?raw=true')" },
+    { id: 'obj3', x: 2200, y: 60,  img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/LUNETTE%20SWAG.png?raw=true')" },
+    // FIX : iPod déplacé de 4800 → 3800 pour être dans le segment FD4 mais atteignable
+    { id: 'obj4', x: 3800, y: 100, img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/IPOD.png?raw=true')" },
+    { id: 'obj5', x: 4800, y: 40,  img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/HANDSPINNER.png?raw=true')" }
+];
 
-    const swagPhrases = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
-    const trashObjectsConfig = [
-    { id: 'police1', x: 1200, y: 0, type: 'police', imgs: ["url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%201%20(2).png?raw=true')", "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%202%20(2).png?raw=true')"] },
-    { id: 'poubelle', x: 2800, y: 0, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Poubelle.png?raw=true')" },
-    { id: 'puff', x: 4000, y: 80, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Puff%20JNR.png?raw=true')" }
+const swagPhrases  = ["TROP DE STYLE !", "SWAG DE POULE !", "FRAIS !", "OKLM", "GÉNÉRATION 2008", "STEEZY", "PROPRE !"];
+const trashPhrases = ["C'EST NUL !", "PAS SWAG...", "LA HONTE !", "ZÉRO STYLE", "CHEUM", "AÏE AÏE AÏE"];
+
+const trashObjectsConfig = [
+    {
+        id: 'police1', x: 1200, y: 0, type: 'police',
+        imgs: [
+            "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%201%20(2).png?raw=true')",
+            "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/flic%202%20(2).png?raw=true')"
+        ]
+    },
+    // FIX : La poubelle est 'static-ground' - elle ne bouge pas et n'a pas de bounce
+    { id: 'poubelle', x: 2800, y: 0, type: 'static-ground', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Poubelle.png?raw=true')" },
+    { id: 'puff',     x: 4000, y: 80, type: 'static', img: "url('https://github.com/S0Kush/maison-de-bois-2026/blob/main/Puff%20JNR.png?raw=true')" }
 ];
 
 const allObjectsConfig = [...swagObjectsConfig, ...trashObjectsConfig];
-    let gameActive = false, swagScore = 0, gameInterval, animFrame = 0, isDancing = false;
-    let playerY = 0, vy = 0, gravity = 0.28, isJumping = false;
-    let activeItems = [], collectedIds = new Set();
-    let lastTime = 0;
-const fpsTarget = 60; // On cible la vitesse normale
-const frameMs = 1000 / fpsTarget;
 
-    function startSequence() {
-        btn.style.display = 'none';
-        loadBar.style.display = 'block';
-        let width = 0;
-        const loadInterval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(loadInterval);
-                lcdText.style.display = 'none'; loadBar.style.display = 'none';
-                screen.style.height = '320px';
-                setTimeout(startGame, 600);
-            } else {
-                width += 5; loadFill.style.width = width + '%';
-                lcdText.innerHTML = "LOADING SWAG...";
-            }
-        }, 100);
+/* ============================================
+   VARIABLES D'ÉTAT
+============================================ */
+let gameActive   = false;
+let swagScore    = 0;
+let animFrame    = 0;
+let isDancing    = false;
+let playerY      = 0;
+let vy           = 0;
+const gravity    = 0.28;
+let isJumping    = false;
+let activeItems  = [];
+let collectedIds = new Set();
+let lastTime     = 0;
+const fpsTarget  = 60;
+const frameMs    = 1000 / fpsTarget;
+
+// Vitesse de défilement (conservée identique à l'original)
+const SCROLL_SPEED = 30;
+const BG_OFFSET    = 0.833;
+
+let isMuted = false; // état audio
+
+/* ============================================
+   GESTION AUDIO
+   NOUVEAU : YouTube en autoplay muted + unmute au clic
+============================================ */
+function toggleMute() {
+    isMuted = !isMuted;
+    muteBtn.textContent = isMuted ? '🔊' : '🔇';
+    // On modifie le src de l'iframe pour basculer mute/unmute
+    const base = 'https://www.youtube.com/embed/hg2GdzfiQ2U?autoplay=1&loop=1&playlist=hg2GdzfiQ2U&enablejsapi=1&controls=0&mute=';
+    ytPlayer.src = base + (isMuted ? '1' : '0');
+}
+
+// Tenter de démarrer l'audio non-muté au premier clic utilisateur
+document.addEventListener('click', function tryUnmute() {
+    if (isMuted) return;
+    ytPlayer.src = 'https://www.youtube.com/embed/hg2GdzfiQ2U?autoplay=1&loop=1&playlist=hg2GdzfiQ2U&enablejsapi=1&controls=0&mute=0';
+    document.removeEventListener('click', tryUnmute);
+}, { once: true });
+
+/* ============================================
+   GESTION DU MENU iPod
+   NOUVEAU : Navigation au click wheel
+============================================ */
+function handleMenuSelect(action) {
+    switch(action) {
+        case 'play':  startSequence(); break;
+        case 'insta': openLink('https://www.instagram.com/p/DXuQVvaDCUo/'); break;
+        case 'dice':  openLink('https://dice.fm/event/k6d99l-les-nuits-maison-de-bois-7th-may-bien-public-bordeaux-tickets'); break;
+        case 'infos':
+            // Affiche une info dans l'écran
+            lcdText.innerHTML = '📍 BIEN PUBLIC<br>BORDEAUX<br>07.05.2026';
+            menuScreen.style.display = 'none';
+            loadingScreen.style.display = 'flex';
+            loadingFill.parentElement.style.display = 'none';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                menuScreen.style.display = 'flex';
+                lcdText.innerHTML = '';
+                loadingFill.parentElement.style.display = 'block';
+            }, 3000);
+            break;
     }
+}
 
-   function startGame() {
-    gameArea.style.display = 'block'; 
-    gameUI.style.display = 'block'; 
-    hint.style.display = 'block';
-    gameActive = true; 
-    lastTime = performance.now(); // Initialise le chrono
+// Navigation wheel : click sur l'anneau sélectionne l'item suivant
+let menuIndex = 0;
+function handleWheelClick() {
+    if (gameActive) {
+        jump();
+        return;
+    }
+    if (isDancing) return;
+    // Rotation du menu
+    const items = document.querySelectorAll('.menu-item');
+    items[menuIndex].classList.remove('selected');
+    menuIndex = (menuIndex + 1) % items.length;
+    items[menuIndex].classList.add('selected');
+}
+
+// Bouton central : valide la sélection ou saute
+function handleCenterBtn(e) {
+    e.stopPropagation();
+    if (gameActive) {
+        jump();
+        return;
+    }
+    if (isDancing) return;
+    const actions = ['play', 'insta', 'dice', 'infos'];
+    handleMenuSelect(actions[menuIndex]);
+}
+
+function openLink(url) {
+    window.open(url, '_blank');
+}
+
+/* ============================================
+   SÉQUENCE DE LANCEMENT
+   NOUVEAU : Fade-in + transition iPod
+============================================ */
+function startSequence() {
+    // Masque le menu, affiche le loading
+    menuScreen.style.display = 'none';
+    loadingScreen.style.display = 'flex';
+    lcdText.innerHTML = 'LOADING SWAG...';
+    centerBtnLabel.textContent = 'JUMP';
+
+    let width = 0;
+    const loadInterval = setInterval(() => {
+        if (width >= 100) {
+            clearInterval(loadInterval);
+            loadingScreen.style.display = 'none';
+            // Agrandit l'écran
+            screen.style.height = '320px';
+            setTimeout(startGame, 600);
+        } else {
+            width += 5;
+            loadingFill.style.width = width + '%';
+        }
+    }, 100);
+}
+
+/* ============================================
+   DÉMARRAGE DU JEU
+============================================ */
+function startGame() {
+    // NOUVEAU : Fade-in de la zone de jeu
+    gameArea.style.display = 'block';
+    gameArea.classList.add('fade-in');
+    setTimeout(() => gameArea.classList.remove('fade-in'), 800);
+
+    gameUI.style.display = 'block';
+    hintText.classList.add('visible');
+
+    // Active le glow du wheel pour inciter à taper
+    clickWheel.classList.add('game-active');
+
+    gameActive = true;
+    lastTime = performance.now();
     requestAnimationFrame(smoothLoop);
 }
-    function jump() { 
-        if (!gameActive || isJumping || isDancing) return; 
-        isJumping = true; 
-        vy = 8; 
-    }
 
+/* ============================================
+   SAUT
+============================================ */
+function jump() {
+    if (!gameActive || isJumping || isDancing) return;
+    isJumping = true;
+    vy = 8;
+}
+
+/* ============================================
+   BOUCLE PRINCIPALE (rAF)
+============================================ */
+function smoothLoop(currentTime) {
+    if (!gameActive) return;
+    const deltaTime = currentTime - lastTime;
+    if (deltaTime >= frameMs) {
+        gameLoop();
+        lastTime = currentTime;
+    }
+    requestAnimationFrame(smoothLoop);
+}
+
+function gameLoop() {
+    if (!gameActive) return;
+
+    // --- PHYSIQUE DU SAUT ---
+    vy -= gravity;
+    playerY += vy;
+    if (playerY <= 0) { playerY = 0; vy = 0; isJumping = false; }
+    player.style.bottom = playerY + 'px';
+    animFrame++;
+
+    if (!isDancing) {
+        // --- PROGRESSION ---
+        swagScore += 0.08;
+        const scoreInt = Math.min(100, Math.floor(swagScore));
+        gameFill.style.width = scoreInt + '%';
+        if (swagCount) swagCount.textContent = scoreInt + '%';
+
+        // --- DÉFILEMENT BG (vitesse conservée identique) ---
+        bgLayer.style.transform = `translateX(-${swagScore * BG_OFFSET}%)`;
+
+        // --- OBJETS ---
+        manageItems();
+
+        // --- FIN DE PARTIE ---
+        if (swagScore >= 100) startDance();
+
+        // --- ANIMATION SPRITE ---
+        if (isJumping) {
+            player.style.backgroundImage = spriteJump[0];
+        } else {
+            const walkFrame = Math.floor(animFrame / 10) % 4;
+            player.style.backgroundImage = spriteWalk[walkFrame];
+        }
+    } else {
+        // Animation danse
+        player.style.backgroundImage = spriteDance[Math.floor(animFrame / 10) % 3];
+    }
+}
+
+/* ============================================
+   GESTION DES OBJETS (swag + trash)
+============================================ */
 function manageItems() {
-    const bgOffset = swagScore * 30;
+    const bgOffset = swagScore * SCROLL_SPEED;
 
     allObjectsConfig.forEach(obj => {
         const currentX = obj.x - bgOffset;
-        
-        // --- 1. DISPARITION NETTE À GAUCHE ---
-        if (currentX < -100) {
-            let itemIndex = activeItems.findIndex(i => i.id === obj.id);
-            if (itemIndex !== -1) {
-                activeItems[itemIndex].el.remove(); 
-                activeItems.splice(itemIndex, 1);   
-                collectedIds.add(obj.id); 
+
+        // --- NETTOYAGE À GAUCHE ---
+        if (currentX < -120) {
+            const idx = activeItems.findIndex(i => i.id === obj.id);
+            if (idx !== -1) {
+                activeItems[idx].el.remove();
+                activeItems.splice(idx, 1);
+                collectedIds.add(obj.id);
             }
-            return; 
+            return;
         }
 
-        if (currentX < screen.offsetWidth + 50 && currentX >= -100 && !collectedIds.has(obj.id)) {
+        // --- AFFICHAGE ---
+        if (currentX < screen.offsetWidth + 60 && currentX >= -120 && !collectedIds.has(obj.id)) {
             let item = activeItems.find(i => i.id === obj.id);
-            const isTrash = (obj.type === 'police' || obj.id === 'poubelle' || obj.id === 'puff');
+
+            // Détermine si c'est un objet négatif
+            const isTrash = (obj.type === 'police' || obj.type === 'static-ground' || obj.id === 'puff');
 
             if (!item) {
                 const el = document.createElement('div');
                 el.className = isTrash ? 'trash-item' : 'swag-item';
-                
+
                 if (isTrash) {
-                    el.style.width = "100px";
-                    el.style.height = "120px";
-                    el.style.filter = "drop-shadow(0 0 5px red)";
-                    el.style.zIndex = "25";
+                    el.style.filter = obj.type === 'police'
+                        ? 'drop-shadow(0 0 6px rgba(255,80,80,0.7))'
+                        : 'drop-shadow(2px 4px 6px rgba(0,0,0,0.7))';
                 }
 
                 if (obj.img) el.style.backgroundImage = obj.img;
@@ -395,154 +1031,176 @@ function manageItems() {
                 item = { el, id: obj.id, x: obj.x, y: obj.y, type: obj.type };
                 activeItems.push(item);
             }
-            
+
+            // --- ANIMATION FLIC ---
             if (obj.type === 'police' && obj.imgs) {
-                let frameIndex = Math.floor(animFrame / 15) % 2;
+                const frameIndex = Math.floor(animFrame / 15) % 2;
                 item.el.style.backgroundImage = obj.imgs[frameIndex];
+                item.el.style.transform = frameIndex === 1 ? 'scale(1.1)' : 'scale(1)';
             }
 
-            let finalY = (obj.type === 'police' || obj.id === 'poubelle') ? 0 : obj.y;
-            const isFlying = (!obj.type || (obj.type === 'static' && obj.id !== 'poubelle'));
-            const bounce = isFlying ? Math.sin(animFrame * 0.1) * 10 : 0;
-            
-            item.el.style.left = currentX + 'px';
+            // --- POSITIONNEMENT ---
+            // FIX : La poubelle (static-ground) n'a AUCUN bounce, elle reste collée au sol
+            let finalY;
+            let bounce = 0;
+
+            if (obj.type === 'police' || obj.type === 'static-ground') {
+                // Objets au sol sans bounce (flic + poubelle)
+                finalY = 0;
+                bounce = 0;
+            } else {
+                // Objets volants avec bounce sinusoïdal
+                finalY = obj.y;
+                bounce = Math.sin(animFrame * 0.1) * 10;
+            }
+
+            item.el.style.left   = currentX + 'px';
             item.el.style.bottom = (finalY + bounce) + 'px';
 
-            // --- 2. REMPLACE CETTE ZONE (LA COLLISION) ---
-            const playerCenterX = 40; // Centre horizontal de Béné
-            const hitWidth = 20;      // Marge de tolérance (très fine)
-            const hitHeight = 45;     // Marge de tolérance verticale
+            // --- COLLISION ---
+            const playerCenterX = 40;
+            const hitWidth      = 20;
+            const hitHeight     = 45;
 
-            // On vérifie si le centre de Béné est sur l'objet
             if (Math.abs(currentX - playerCenterX) < hitWidth) {
-                // Si Béné est au sol ou trop bas par rapport à l'objet
                 if (playerY < finalY + hitHeight) {
                     if (isTrash) collectTrash(item);
                     else collectItem(item);
                 }
             }
-            // ----------------------------------------------
         }
     });
 }
 
-    function collectItem(item) {
+/* ============================================
+   COLLECTE OBJET SWAG
+============================================ */
+function collectItem(item) {
     collectedIds.add(item.id);
-    
-    // Création du message flottant
+
     const popup = document.createElement('div');
     popup.className = 'swag-popup';
-    popup.style.left = item.el.style.left;
-    popup.style.bottom = (parseInt(item.el.style.bottom) + 40) + 'px';
-    popup.innerHTML = swagPhrases[Math.floor(Math.random() * swagPhrases.length)];
+    popup.style.left   = item.el.style.left;
+    popup.style.bottom = (parseInt(item.el.style.bottom || 0) + 40) + 'px';
+    popup.innerHTML    = swagPhrases[Math.floor(Math.random() * swagPhrases.length)];
     gameArea.appendChild(popup);
-    
-    // Nettoyage automatique du message
     setTimeout(() => popup.remove(), 800);
 
     item.el.remove();
     activeItems = activeItems.filter(i => i.id !== item.id);
-    
-    // Ton effet visuel sur la barre
-    gameFill.style.filter = "brightness(2)";
-    setTimeout(() => gameFill.style.filter = "none", 200);
+
+    // Flash sur la barre
+    gameFill.style.filter = 'brightness(2)';
+    setTimeout(() => gameFill.style.filter = 'none', 200);
 }
 
+/* ============================================
+   COLLECTE OBJET TRASH
+============================================ */
 function collectTrash(item) {
     collectedIds.add(item.id);
-    
-    // Message de honte
+
     const popup = document.createElement('div');
     popup.className = 'trash-popup';
-    popup.style.left = item.el.style.left;
-    popup.style.bottom = (parseInt(item.el.style.bottom) + 60) + 'px';
-    popup.innerText = trashPhrases[Math.floor(Math.random() * trashPhrases.length)];
+    popup.style.left   = item.el.style.left;
+    popup.style.bottom = (parseInt(item.el.style.bottom || 0) + 60) + 'px';
+    popup.innerText    = trashPhrases[Math.floor(Math.random() * trashPhrases.length)];
     gameArea.appendChild(popup);
-    
     setTimeout(() => popup.remove(), 800);
+
     item.el.remove();
-    
-    // Optionnel : Baisser un peu la barre de swag
-    swagScore = Math.max(0, swagScore - 5); 
+    activeItems = activeItems.filter(i => i.id !== item.id);
+
+    // Pénalité légère
+    swagScore = Math.max(0, swagScore - 5);
     gameFill.style.width = swagScore + '%';
-    
-    // Effet visuel de flash rouge sur l'écran
-    screen.style.borderColor = "red";
-    setTimeout(() => screen.style.borderColor = "var(--pink)", 200);
+
+    // Flash rouge sur l'écran
+    screen.style.borderColor = 'red';
+    setTimeout(() => screen.style.borderColor = '', 200);
 }
-    function gameLoop() {
-        if (!gameActive) return;
-        
-        // Physique
-        vy -= gravity; playerY += vy;
-        if (playerY <= 0) { playerY = 0; vy = 0; isJumping = false; }
-        player.style.bottom = playerY + 'px';
+
+/* ============================================
+   DANSE FINALE
+   FIX : Plus de téléportation brusque.
+   On laisse la transition CSS (1.2s) faire le
+   déplacement fluide vers le centre.
+============================================ */
+function startDance() {
+    isDancing = true;
+    gameActive = false;
+
+    // Nettoie les items restants
+    activeItems.forEach(i => i.el.remove());
+    activeItems = [];
+
+    // FIX : On ne force plus left instantanément.
+    // Le player a une transition CSS de 1.2s sur 'left'.
+    // On la déclenche simplement en changeant la valeur.
+    player.style.left = 'calc(50% - 80px)';
+    playerY = 0;
+    player.style.bottom = '0px';
+
+    // Continue l'animation de danse manuellement pendant 4s
+    animFrame = 0;
+    const danceLoop = setInterval(() => {
         animFrame++;
+        player.style.backgroundImage = spriteDance[Math.floor(animFrame / 10) % 3];
+    }, 16);
 
-        if (!isDancing) {
-            swagScore += 0.08;
-            gameFill.style.width = swagScore + '%';
-            bgLayer.style.transform = `translateX(-${swagScore * 0.833}%)`;
-            
-            manageItems(); // Gestion des objets Swag
-
-            if (swagScore >= 100) startDance();
-            
-            // Animation perso
-           if (isJumping) {
-    player.style.backgroundImage = spriteJump[0];
-} else {
-    // Alterne entre les 4 frames de marche toutes les 10 frames de jeu
-    let walkFrame = Math.floor(animFrame / 10) % 4;
-    player.style.backgroundImage = spriteWalk[walkFrame];
+    setTimeout(() => {
+        clearInterval(danceLoop);
+        endSequence();
+    }, 4000);
 }
-        } else {
-            player.style.backgroundImage = spriteDance[Math.floor(animFrame/10)%3];
+
+/* ============================================
+   FIN DE SÉQUENCE - Affichage des liens
+============================================ */
+function endSequence() {
+    // Stop animation + retire le jeu
+    gameArea.style.display = 'none';
+    gameUI.style.display   = 'none';
+    hintText.classList.remove('visible');
+    clickWheel.classList.remove('game-active');
+    centerBtnLabel.textContent = 'PLAY';
+
+    // Réduit l'écran
+    screen.style.height = '200px';
+
+    setTimeout(() => {
+        // Affiche les liens dans l'écran (style iPod menu)
+        linksContainer.style.display = 'flex';
+
+        // Petit message de victoire dans la titlebar
+        const title = document.querySelector('#ipod-titlebar span');
+        if (title) {
+            title.textContent = '🎉 PARTY LOADED!';
+            title.style.animation = 'blink 0.8s infinite';
         }
-    }
-
-    function startDance() {
-        isDancing = true; 
-        activeItems.forEach(i => i.el.remove());
-        player.style.left = "calc(50% - 32px)"; playerY = 0;
-        setTimeout(endSequence, 4000);
-    }
-
-    function endSequence() {
-        gameActive = false; clearInterval(gameInterval);
-        gameArea.style.display = 'none'; gameUI.style.display = 'none'; hint.style.display = 'none';
-        screen.style.height = '160px';
-        setTimeout(() => {
-            lcdText.style.display = 'block'; lcdText.innerHTML = "PARTY LOADED!";
-            meme.style.display = 'block'; links.style.display = 'flex';
-        }, 600);
-    }
-   function smoothLoop(currentTime) {
-    if (!gameActive) return;
-
-    // Calcul du temps écoulé depuis la dernière image
-    const deltaTime = currentTime - lastTime;
-
-    // On ne lance gameLoop que si assez de temps est passé (env 16ms)
-    if (deltaTime >= frameMs) {
-        gameLoop();
-        lastTime = currentTime;
-    }
-
-    requestAnimationFrame(smoothLoop);
+    }, 700);
 }
-function handleJump() {
-    if (isJumping) {
-        playerY += verticalVelocity;
-        verticalVelocity += gravity; // La gravité tire Béné vers le bas
 
-        if (playerY <= 0) {
-            playerY = 0;
-            isJumping = false;
-            verticalVelocity = 0;
-        }
+/* ============================================
+   CONTRÔLES CLAVIER (bonus accessibilité)
+============================================ */
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        if (gameActive) jump();
+        else if (!isDancing) handleCenterBtn(new Event('click'));
     }
-}
+    if (e.code === 'ArrowDown' && !gameActive && !isDancing) {
+        handleWheelClick();
+    }
+    if (e.code === 'KeyM') toggleMute();
+});
+
+/* ============================================
+   TOUCH SUPPORT : tap sur l'écran = saut
+============================================ */
+screen.addEventListener('click',      () => { if (gameActive) jump(); });
+screen.addEventListener('touchstart', (e) => { e.preventDefault(); if (gameActive) jump(); }, { passive: false });
 </script>
 </body>
 </html>
