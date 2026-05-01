@@ -904,7 +904,14 @@ function manageItems() {
             if (!item) {
                 const el = document.createElement('div');
                 el.className = isTrash ? 'trash-item' : 'swag-item';
-                if (isTrash) el.style.filter = obj.type === 'police' ? 'drop-shadow(0 0 6px rgba(255,80,80,0.7))' : 'drop-shadow(2px 4px 6px rgba(0,0,0,0.7))';
+                
+                // EFFET ROUGE SUR FLIC ET POUBELLE
+                if (obj.type === 'police' || obj.id === 'poubelle') {
+                    el.style.filter = 'drop-shadow(0 0 6px rgba(255,80,80,0.9)) brightness(1.2)';
+                } else if (isTrash) {
+                    el.style.filter = 'drop-shadow(2px 4px 6px rgba(0,0,0,0.7))';
+                }
+
                 if (obj.img) el.style.backgroundImage = obj.img;
                 gameArea.appendChild(el);
                 item = { el, id:obj.id, x:obj.x, y:obj.y, type:obj.type };
