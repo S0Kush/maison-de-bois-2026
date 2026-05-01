@@ -1,5 +1,7 @@
 
 
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1017,16 +1019,30 @@ function endSequence() {
 }
 
 /* ============================================
-   CLAVIER
+   CLAVIER & TACTILE
 ============================================ */
-document.addEventListener('keydown',e=>{
-    if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); if(gameActive)jump(); else if(!isDancing)handleMenuConfirm(); }
-    if(e.code==='ArrowDown'&&!gameActive&&!isDancing) handleMenuNav();
-    if(e.code==='Enter'&&!gameActive&&!isDancing) handleMenuConfirm();
-    if(e.code==='KeyM') toggleMute();
+document.addEventListener('keydown', e => {
+    if(e.code === 'Space' || e.code === 'ArrowUp'){ 
+        e.preventDefault(); 
+        if(gameActive) jump(); 
+        else if(!isDancing) handleMenuConfirm(); 
+    }
+    if(e.code === 'ArrowDown' && !gameActive && !isDancing) handleMenuNav();
+    if(e.code === 'Enter' && !gameActive && !isDancing) handleMenuConfirm();
+    if(e.code === 'KeyM') toggleMute();
 });
-screen.addEventListener('click',()=>{ if(gameActive)jump(); });
-screen.addEventListener('touchstart',e=>{ e.preventDefault(); if(gameActive)jump(); },{passive:false});
+
+screen.addEventListener('click', () => { 
+    if(gameActive) jump(); 
+});
+
+// CORRECTION 1 : On ne bloque le comportement tactile QUE si le jeu est lancé
+screen.addEventListener('touchstart', e => { 
+    if(gameActive) {
+        e.preventDefault(); 
+        jump(); 
+    }
+}, {passive: false});
 
 document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
@@ -1035,6 +1051,9 @@ document.addEventListener("visibilitychange", () => {
         if (gameActive || isDancing) music.play();
     }
 });
+
+// CORRECTION 2 : On initialise tes contrôles tactiles pour forcer le clic sur les boutons du menu
+initMobileTouch();
 </script>
 </body>
 </html>
